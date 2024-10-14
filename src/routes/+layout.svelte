@@ -17,4 +17,12 @@
     });
 </script>
 
+<style>
+    :global(body) {
+        font-family: 'Sen', sans-serif;
+        font-style: normal;
+        font-weight: 200;
+        background-color: dark-olive;
+    }
+</style>
 <slot />

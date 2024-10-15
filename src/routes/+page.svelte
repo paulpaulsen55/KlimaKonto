@@ -16,8 +16,8 @@
             <h1 class="text-4xl font-bold text-light-olive mb-4">CO<sub>2</sub>ntrol</h1>
             <p class="font-bold text-light-olive mb-6">Time for change</p>
             <div class="flex flex-col space-y-4 w-full">
-                <button class="w-full bg-green-500 hover:bg-green-700 text-white font-bold py-2 px-4 rounded bg-olive text-light-olive" on:click={() => {window.location.href = '/auth';}}>Login</button>
-                <button class="w-full bg-green-500 hover:bg-green-700 text-white font-bold py-2 px-4 rounded bg-light-olive text-black" on:click={() => {window.location.href = '/auth';}}>Register</button>
+                <button class="w-full font-bold py-2 px-4 rounded bg-olive text-light-olive" on:click={() => {window.location.href = '/auth';}}>Login</button>
+                <button class="w-full font-bold py-2 px-4 rounded bg-light-olive text-black" on:click={() => {window.location.href = '/auth';}}>Register</button>
             </div>        
         </div>
     </div>
@@ -52,13 +52,11 @@
       top: 50%;
       left: 40%;
       animation: rotate 12s linear infinite;
-      transform: rotate(3deg);
     }
   
     .tri3 {
       top: 30%;
       left: 60%;
-      transform: rotate(20deg);
       animation: rotate 6s linear infinite;
     }
   </style>

@@ -1,5 +1,6 @@
 <script lang="ts">
     import { invalidate } from '$app/navigation';
+  import SelectInitialGoalPopup from '$lib/SelectInitialGoalPopup.svelte';
 	import type { PageData } from './$types';
 
 	export let data: PageData;
@@ -20,7 +21,9 @@
         form.reset();
     }
 </script>
+<SelectInitialGoalPopup {supabase} {user} goal = {0}>
 
+</SelectInitialGoalPopup>
 <h1>Private page for user: {user?.email}</h1>
 <h2>Bisherige Actions:</h2>
 <ul>

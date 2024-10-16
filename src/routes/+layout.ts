@@ -1,4 +1,5 @@
 import { createBrowserClient, createServerClient, isBrowser } from '@supabase/ssr'
+import { user as userStore, supabase as supabaseClient } from '$lib/store'
 
 const PUBLIC_SUPABASE_URL = import.meta.env.VITE_PUBLIC_SUPABASE_URL
 const PUBLIC_SUPABASE_ANON_KEY = import.meta.env.VITE_PUBLIC_SUPABASE_ANON_KEY
@@ -40,6 +41,9 @@ export const load: LayoutLoad = async ({ data, depends, fetch }) => {
     const {
         data: { user },
     } = await supabase.auth.getUser()
+
+    userStore.set(user)
+    supabaseClient.set(supabase)
 
     return { session, supabase, user }
 }

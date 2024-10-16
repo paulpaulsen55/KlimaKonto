@@ -4,16 +4,15 @@
     import type { SupabaseClient } from '@supabase/supabase-js';
 
     let goal = 0;
-    let s: SupabaseClient;
+    let sc: SupabaseClient;
 
     supabase.subscribe(value => {
         if (!value) return;
-        s = value;
+        sc = value;
     });
 
-
     async function handleSubmit() {
-        await s.from('user_goals').upsert({ goal: goal, id: $user?.id });
+        await sc.from('user_goals').upsert({ goal: goal, id: $user?.id });
         
         invalidate('supabase:db:user_goals');
     }

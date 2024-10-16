@@ -1,6 +1,6 @@
 <script lang="ts">
     import { invalidate } from '$app/navigation';
-  import SelectInitialGoalPopup from '$lib/SelectInitialGoalPopup.svelte';
+  import SelectInitialGoalPopup from '$lib/SelectGoalPopup.svelte';
 	import type { PageData } from './$types';
 
 	export let data: PageData;

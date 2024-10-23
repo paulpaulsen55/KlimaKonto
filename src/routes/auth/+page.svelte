@@ -1,4 +1,4 @@
-<div class="bg-green-500 flex justify-between items-center p-4">
+<div class="flex justify-between items-center p-4">
     <p>KlimaKonto</p>
     <a href="/">Home</a>
 </div>

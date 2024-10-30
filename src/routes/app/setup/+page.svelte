@@ -1,13 +1,26 @@
-<script>
+<script lang="ts">
     import { StepIndicator, Button } from "flowbite-svelte";
     import { fly } from "svelte/transition";
     import SelectGoalPopup from "$lib/components/SelectGoalPopup.svelte";
     import UpdateDisplayName from "$lib/components/UpdateDisplayName.svelte";
+    import type { SupabaseClient } from "@supabase/supabase-js";
+    import { supabase, user } from "$lib/store";
+
+    let sc: SupabaseClient;
+    supabase.subscribe(value => {
+        if (!value) return;
+        sc = value;
+    });
 
     let currentStep = 1;
     let steps = ["Einführung", "Ziel festlegen", "Nutzername"];
 
     function nextStep() {
+        if (currentStep == steps.length) {
+            sc.from('setup').upsert({ is_setup: true, user_id: $user?.id });
+            return;
+        }
+
         if (currentStep < steps.length)
             currentStep++;
     }

@@ -4,7 +4,6 @@
     import type { SupabaseClient } from '@supabase/supabase-js';
 	import type { PageData } from './$types';
     import { supabase, user } from '$lib/store';
-    import Setup from '$lib/components/setup/Setup.svelte';
 
 	export let data: PageData;
 
@@ -28,7 +27,6 @@
     }
 </script>
 <SelectGoalPopup />
-<Setup />
 <body>
     <h1>Private page for user: {$user?.email}</h1>
     <h2>Bisherige Actions:</h2>

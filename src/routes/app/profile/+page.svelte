@@ -14,13 +14,18 @@
 	};
 </script>
 
-<div class="p-4 min-h-screen text-light-olive">
-	<button class="bg-olive p-2 rounded-full mb-4" on:click={logout}>
-		Logout
-	</button>
+<div class="p-4 h-full text-light-olive">
+	
+	
 	<div class="max-w-s mx-auto p-4">
 		<!-- Titel -->
 		<h2 class="text-3xl font-bold mb-4">Profile & Settings</h2>
+
+		<!-- Logout -->
+		<div class="flex justify-between items-center bg-olive p-2 rounded-full mb-2 cursor-pointer hover:bg-light-olive hover:text-dark-olive">
+			<button class="p-2 font-bold" on:click={logout}>Logout</button>
+			<img src="/options/ChevronRight.svg" alt="Pfeil rechts" />
+		</div>
 
 		<!-- recent tracks -->
 		<div class="flex justify-between items-center bg-olive p-2 rounded-full mb-2 cursor-pointer hover:bg-light-olive hover:text-dark-olive">

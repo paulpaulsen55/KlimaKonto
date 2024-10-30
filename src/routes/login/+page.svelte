@@ -17,10 +17,10 @@
               <p class="font-bold text-light-olive mb-6">Sign in to your Account</p>
                 <div class="flex flex-col space-y-4 w-full">
                   <label for="email">
-                    <input id="email" class="w-full font-bold py-2 px-4 rounded bg-light-olive text-black" name="E-Mail" value="E-Mail">
+                    <input id="email" class="w-full font-bold py-2 px-4 rounded bg-light-olive text-black" name="E-Mail" placeholder="E-Mail">
                   </label>
                   <label for="password">
-                    <input id="password" class="w-full font-bold py-2 px-4 rounded bg-light-olive text-black" name="Password" value="Password">
+                    <input id="password" class="w-full font-bold py-2 px-4 rounded bg-light-olive text-black" name="Password" placeholder="Password">
                   </label>
                   <button class="w-full font-bold py-2 px-4 rounded bg-olive text-light-olive">Login</button>
                   <p class="font-bold text-light-olive mb-6">Need an Account? <a class="underline text-bg-olive" href="/register">Register</a></p>

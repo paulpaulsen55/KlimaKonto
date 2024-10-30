@@ -12,7 +12,7 @@ export const actions: Actions = {
         if (error) {
             redirect(303, '/auth')
         } else {
-            redirect(303, '/app/home')
+            redirect(303, '/app/setup')
         }
     },
     login: async ({ request, locals: { supabase } }) => {

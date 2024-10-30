@@ -1,9 +1,23 @@
 <script>
-  import { AccordionItem, Accordion } from 'flowbite-svelte';
-  let isOpen = false;
+	import { AccordionItem, Accordion } from 'flowbite-svelte';
+	import { goto } from '$app/navigation';
+
+	
+	export let data;
+	$: ({ supabase } = data);
+
+	let isOpen = false;
+
+	$: logout = async () => {
+		await supabase.auth.signOut();
+		goto('/');
+	};
 </script>
 
 <div class="p-4 min-h-screen text-light-olive">
+	<button class="bg-olive p-2 rounded-full mb-4" on:click={logout}>
+		Logout
+	</button>
 	<div class="max-w-s mx-auto p-4">
 		<!-- Titel -->
 		<h2 class="text-3xl font-bold mb-4">Profile & Settings</h2>

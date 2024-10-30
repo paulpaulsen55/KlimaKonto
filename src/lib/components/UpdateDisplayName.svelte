@@ -1,9 +1,8 @@
 <script lang="ts">
-    import { invalidate } from '$app/navigation';
-    import { supabase, user } from '$lib/store';
+    import { supabase } from '$lib/store';
     import type { SupabaseClient } from '@supabase/supabase-js';
 
-    let goal = 0;
+    let displayName = "";
     let sc: SupabaseClient;
 
     supabase.subscribe(value => {
@@ -12,15 +11,19 @@
     });
 
     async function handleSubmit() {
-        await sc.from('user_goals').upsert({ goal: goal, id: $user?.id });
+        if (displayName == "") return;
         
-        invalidate('supabase:db:user_goals');
+        await sc.auth.updateUser({
+            data: {
+                display_name: displayName,
+            }
+        });
     }
 </script>
 <div>
-    <p>Wöchentliches Ziel:</p>
+    <p>Anzeigenamen Bearbeiten:</p>
     <form on:submit|preventDefault={handleSubmit}>
-        <input type="number" name="goal" class="border-2 text-black" bind:value={goal} />
+        <input type="text" name="displayName" class="border-2 text-black" bind:value={displayName} />
         <button type="submit" class="bg-green-500 p-2 rounded m-2">Speichern</button>
     </form>
 </div>

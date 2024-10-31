@@ -2,6 +2,8 @@
     import "../app.css";
     import { invalidate } from '$app/navigation';
     import { onMount } from 'svelte';
+    import { page } from '$app/stores';
+    const hiddenNavRoutes = ['/', '/auth'];
 
     export let data;
     $: ({ session, supabase } = data);
@@ -22,7 +24,7 @@
         font-family: 'Sen', sans-serif;
         font-style: normal;
         font-weight: 200;
-        background-color: dark-olive;
     }
 </style>
+
 <slot />

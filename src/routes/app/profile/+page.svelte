@@ -21,7 +21,7 @@
 		<h2 class="text-3xl font-bold mb-4">Profile & Settings</h2>
 
 		<!-- recent tracks -->
-		<div class="flex justify-between items-center bg-olive p-2 rounded-full mb-2 cursor-pointer hover:bg-light-olive hover:text-dark-olive">
+		<div class="flex justify-between items-center bg-gray-olive p-2 rounded-full mb-2 cursor-pointer hover:bg-light-olive hover:text-dark-olive">
 			<span class="p-2 font-bold">recent tracks</span>
 			<img src="/options/ChevronRight.svg" alt="Pfeil rechts" />
 		</div>
@@ -32,7 +32,7 @@
         <!-- Header im Accordion so stylen wie das div -->
         <div
           slot="header"
-          class="flex w-full justify-between items-center bg-olive p-2 rounded-full cursor-pointer hover:bg-light-olive hover:text-dark-olive">
+          class="flex w-full justify-between items-center bg-gray-olive p-2 rounded-full cursor-pointer hover:bg-light-olive hover:text-dark-olive">
           <span class="p-2 font-bold">weekly goal</span>
 			  {#if isGoalOpen}
           <img src="/options/ChevronDown.svg" alt="Pfeil runter" />
@@ -45,7 +45,7 @@
         <div slot="arrowdown" hidden/>
         
         <!-- Inhalt des AccordionItem -->
-        <div class="flex justify-between items-center bg-olive p-2 rounded-lg mb-2 cursor-pointer -mt-5 h-[30vh]">
+        <div class="flex justify-between items-center bg-gray-olive p-2 rounded-lg mb-2 cursor-pointer -mt-5 h-[30vh]">
           <span class="p-2 font-bold">50 points</span>
         </div>
 
@@ -55,19 +55,19 @@
     
 		<!-- Andere Optionen -->
 		<div
-			class="flex justify-between items-center bg-olive p-2 rounded-full mb-2 cursor-pointer hover:bg-light-olive hover:text-dark-olive"
+			class="flex justify-between items-center bg-gray-olive p-2 rounded-full mb-2 cursor-pointer hover:bg-light-olive hover:text-dark-olive"
 		>
 			<span class="p-2 font-bold">view friends</span>
 			<img src="/options/ChevronRight.svg" alt="Pfeil rechts" />
 		</div>
 		<div
-			class="flex justify-between items-center bg-olive p-2 rounded-full mb-2 cursor-pointer hover:bg-light-olive hover:text-dark-olive"
+			class="flex justify-between items-center bg-gray-olive p-2 rounded-full mb-2 cursor-pointer hover:bg-light-olive hover:text-dark-olive"
 		>
 			<span class="p-2 font-bold">change username</span>
 			<img src="/options/ChevronRight.svg" alt="Pfeil rechts" />
 		</div>
 		<div
-			class="flex justify-between items-center bg-olive p-2 rounded-full mb-2 cursor-pointer hover:bg-light-olive hover:text-dark-olive"
+			class="flex justify-between items-center bg-gray-olive p-2 rounded-full mb-2 cursor-pointer hover:bg-light-olive hover:text-dark-olive"
 		>
 			<span class="p-2 font-bold">change profile picture</span>
 			<img src="/options/ChevronRight.svg" alt="Pfeil rechts" />
@@ -77,7 +77,7 @@
         <!-- Header im Accordion so stylen wie das div -->
         <div
           slot="header"
-          class="flex w-full justify-between items-center bg-olive p-2 rounded-full cursor-pointer hover:bg-light-olive hover:text-dark-olive">
+          class="flex w-full justify-between items-center bg-gray-olive p-2 rounded-full cursor-pointer hover:bg-light-olive hover:text-dark-olive">
           <span class="p-2 font-bold">change password</span>
 			  {#if isPwOpen}
           <img src="/options/ChevronDown.svg" alt="Pfeil runter" />
@@ -91,13 +91,13 @@
           <label for="new_password">
              <input type="password" name="new_password" class="w-full font-bold py-2 px-4 rounded mb-2 bg-light-olive text-black" placeholder="new password" required minlength="6" />
           </label>
-          <button type="submit" class="flex justify-between items-center bg-olive p-2 rounded-full mb-2 cursor-pointer hover:bg-light-olive hover:text-dark-olive">submit</button>
+          <button type="submit" class="flex justify-between items-center bg-gray-olive p-2 rounded-full mb-2 cursor-pointer hover:bg-light-olive hover:text-dark-olive">submit</button>
        </form>
       </AccordionItem>
     </Accordion>
     <button
     type="button"
-    class="w-full flex justify-between items-center bg-olive p-2 rounded-full mb-2 cursor-pointer hover:bg-light-olive hover:text-dark-olive"
+    class="w-full flex justify-between items-center bg-gray-olive p-2 rounded-full mb-2 cursor-pointer hover:bg-light-olive hover:text-dark-olive"
     on:click={logout}
   >
     <span class="p-2 font-bold">logout</span>

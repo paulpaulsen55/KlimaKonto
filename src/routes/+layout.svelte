@@ -3,7 +3,6 @@
     import { invalidate } from '$app/navigation';
     import { onMount } from 'svelte';
     import { page } from '$app/stores';
-    const hiddenNavRoutes = ['/', '/auth'];
 
     export let data;
     $: ({ session, supabase } = data);

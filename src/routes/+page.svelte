@@ -16,8 +16,8 @@
           <h1 class="text-4xl font-bold text-light-olive mb-4">CO<sub>2</sub>ntrol</h1>
           <p class="font-bold text-light-olive mb-6">Time for change</p>
           <div class="flex flex-col space-y-4 w-full">
-              <button class="w-full font-bold py-2 px-4 rounded bg-olive text-light-olive" on:click={() => {window.location.href = '/auth';}}>Login</button>
-              <button class="w-full font-bold py-2 px-4 rounded bg-light-olive text-black" on:click={() => {window.location.href = '/auth';}}>Register</button>
+              <button class="w-full font-bold py-2 px-4 rounded bg-olive text-light-olive" on:click={() => {window.location.href = '/login';}}>Login</button>
+              <button class="w-full font-bold py-2 px-4 rounded bg-light-olive text-black" on:click={() => {window.location.href = '/register';}}>Register</button>
           </div>        
       </div>
   </div>

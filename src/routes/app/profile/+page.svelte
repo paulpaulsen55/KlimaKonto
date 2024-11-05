@@ -1,5 +1,16 @@
 <script>
   import { AccordionItem, Accordion } from 'flowbite-svelte';
+  import { goto } from '$app/navigation';
+	import { page } from '$app/stores';
+
+	export let data;
+	$: ({ supabase } = data);
+	$: currentPath = $page.url.pathname;
+
+	$: logout = async () => {
+		await supabase.auth.signOut();
+        goto('/');
+	};
   let isOpen = false;
 </script>
 
@@ -22,11 +33,11 @@
           slot="header"
           class="flex w-full justify-between items-center bg-olive p-2 rounded-full cursor-pointer hover:bg-light-olive hover:text-dark-olive">
           <span class="p-2 font-bold">weekly goal</span>
-			    {#if isOpen}
-            <img src="/options/ChevronDown.svg" alt="Pfeil runter" />
-          {:else}
-            <img src="/options/ChevronRight.svg" alt="Pfeil rechts" />
-          {/if}
+			  {#if isOpen}
+          <img src="/options/ChevronDown.svg" alt="Pfeil runter" />
+        {:else}
+          	<img src="/options/ChevronRight.svg" alt="Pfeil rechts" />
+      	{/if}
         </div>
 
         <div slot="arrowup" hidden/>
@@ -45,26 +56,33 @@
 		<div
 			class="flex justify-between items-center bg-olive p-2 rounded-full mb-2 cursor-pointer hover:bg-light-olive hover:text-dark-olive"
 		>
-			<span class="p-2 font-bold">friends</span>
+			<span class="p-2 font-bold">view friends</span>
 			<img src="/options/ChevronRight.svg" alt="Pfeil rechts" />
 		</div>
 		<div
 			class="flex justify-between items-center bg-olive p-2 rounded-full mb-2 cursor-pointer hover:bg-light-olive hover:text-dark-olive"
 		>
-			<span class="p-2 font-bold">username</span>
+			<span class="p-2 font-bold">change username</span>
 			<img src="/options/ChevronRight.svg" alt="Pfeil rechts" />
 		</div>
 		<div
 			class="flex justify-between items-center bg-olive p-2 rounded-full mb-2 cursor-pointer hover:bg-light-olive hover:text-dark-olive"
 		>
-			<span class="p-2 font-bold">profile picture</span>
+			<span class="p-2 font-bold">change profile picture</span>
 			<img src="/options/ChevronRight.svg" alt="Pfeil rechts" />
 		</div>
 		<div
-			class="flex justify-between items-center bg-olive p-2 rounded-full cursor-pointer hover:bg-light-olive hover:text-dark-olive"
+			class="flex justify-between items-center bg-olive p-2 rounded-full mb-2 cursor-pointer hover:bg-light-olive hover:text-dark-olive"
 		>
-			<span class="p-2 font-bold">password</span>
+			<span class="p-2 font-bold">change password</span>
 			<img src="/options/ChevronRight.svg" alt="Pfeil rechts" />
 		</div>
+    <button
+    type="button"
+    class="w-full flex justify-between items-center bg-olive p-2 rounded-full mb-2 cursor-pointer hover:bg-light-olive hover:text-dark-olive"
+    on:click={logout}
+  >
+    <span class="p-2 font-bold">logout</span>
+  </button>
 	</div>
 </div>

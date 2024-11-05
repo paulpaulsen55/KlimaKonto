@@ -4,18 +4,9 @@
 
 	export let data;
 	$: ({ supabase } = data);
-	$: currentPath = $page.url.pathname;
-
-	$: logout = async () => {
-		await supabase.auth.signOut();
-        goto('/');
-	};
 </script>
 
 <div class="bg-dark-olive fixed inset-0">
-	<header>
-		<button on:click={logout}>Logout</button>
-	</header>
 	<slot />
     <footer class="bg-ultra-olive fixed bottom-0 w-full h-[9.09vh] flex justify-around items-center p-4">
 		<div class="flex justify-between w-full max-w-md mx-auto text-light-olive">

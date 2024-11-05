@@ -56,69 +56,63 @@
         currentCustom="→"
         class="z-50 fuck-flowbite"
     />
-    <form>
-        {#if currentStep == 1}
-            <section in:fly={{ x: 10 }} class="">
-                <p>Hier wird eine Einführung stehen.</p>
-            </section>
-        {:else if currentStep == 2}
-            <section in:fly={{ x: 10, delay: 1 }}>
-                <Label for="goal" class="mb-4 font-semibold">Weekly goal</Label>
-                <ul
-                    class="rounded-lg border bg-dark-gray border-gray-600 divide-y divide-gray-600"
-                >
-                    <li>
-                        <Radio class="p-3" bind:group={goal} value="20"
-                            >10 - Expert</Radio
-                        >
-                    </li>
-                    <li>
-                        <Radio class="p-3" bind:group={goal} value="100"
-                            >100</Radio
-                        >
-                    </li>
-                    <li>
-                        <Radio class="p-3" bind:group={goal} value="200"
-                            >200</Radio
-                        >
-                    </li>
-                    <NumberInput
-                        max="1000"
-                        name="goal_number"
-                        required
-                        bind:value={goal}
-                        class="dark:bg-dark-gray"
-                        pattern="^[1-9][0-9]*$"
-                    />
-                </ul>
-            </section>
-        {:else if currentStep == 3}
-            <section in:fly={{ x: 10, delay: 1 }}>
-                <Label for="display_name" class="mb-4 font-semibold"
-                    >Display Name</Label
-                >
-                <Input
-                    type="text"
-                    name="display_name"
+    {#if currentStep == 1}
+        <section in:fly={{ x: 10 }} class="">
+            <p>Hier wird eine Einführung stehen.</p>
+        </section>
+    {:else if currentStep == 2}
+        <section in:fly={{ x: 10, delay: 1 }}>
+            <Label for="goal" class="mb-4 font-semibold">Weekly goal</Label>
+            <ul
+                class="rounded-lg border bg-dark-gray border-gray-600 divide-y divide-gray-600"
+            >
+                <li>
+                    <Radio class="p-3" bind:group={goal} value="20"
+                        >10 - Expert</Radio
+                    >
+                </li>
+                <li>
+                    <Radio class="p-3" bind:group={goal} value="100">100</Radio>
+                </li>
+                <li>
+                    <Radio class="p-3" bind:group={goal} value="200">200</Radio>
+                </li>
+                <NumberInput
+                    max="1000"
+                    name="goal_number"
                     required
-                    bind:value={displayName}
+                    bind:value={goal}
                     class="dark:bg-dark-gray"
+                    pattern="^[1-9][0-9]*$"
                 />
-            </section>
-        {/if}
+            </ul>
+        </section>
+    {:else if currentStep == 3}
+        <section in:fly={{ x: 10, delay: 1 }}>
+            <Label for="display_name" class="mb-4 font-semibold"
+                >Display Name</Label
+            >
+            <Input
+                type="text"
+                name="display_name"
+                required
+                bind:value={displayName}
+                class="dark:bg-dark-gray"
+            />
+        </section>
+    {/if}
 
-        <div class="w-full flex justify-between items-start px-4">
-            <Button
-                class=""
-                on:click={() => {
-                    prevStep();
-                }}>Zurück</Button
-            >
-            <Button
-                on:click={() => {
-                    nextStep();
-                }}>Weiter</Button
-            >
-        </div>
-    </form>
+    <div class="w-full flex justify-between items-start px-4">
+        <Button
+            class=""
+            on:click={() => {
+                prevStep();
+            }}>Zurück</Button
+        >
+        <Button
+            on:click={() => {
+                nextStep();
+            }}>Weiter</Button
+        >
+    </div>
 </div>

@@ -1,12 +1,31 @@
 <script>
-  import { AccordionItem, Accordion } from 'flowbite-svelte';
-  let isOpen = false;
+	import { AccordionItem, Accordion } from 'flowbite-svelte';
+	import { goto } from '$app/navigation';
+
+	
+	export let data;
+	$: ({ supabase } = data);
+
+	let isOpen = false;
+
+	$: logout = async () => {
+		await supabase.auth.signOut();
+		goto('/');
+	};
 </script>
 
-<div class="p-4 min-h-screen text-light-olive">
+<div class="p-4 h-full text-light-olive">
+	
+	
 	<div class="max-w-s mx-auto p-4">
 		<!-- Titel -->
 		<h2 class="text-3xl font-bold mb-4">Profile & Settings</h2>
+
+		<!-- Logout -->
+		<div class="flex justify-between items-center bg-olive p-2 rounded-full mb-2 cursor-pointer hover:bg-light-olive hover:text-dark-olive">
+			<button class="p-2 font-bold" on:click={logout}>Logout</button>
+			<img src="/options/ChevronRight.svg" alt="Pfeil rechts" />
+		</div>
 
 		<!-- recent tracks -->
 		<div class="flex justify-between items-center bg-olive p-2 rounded-full mb-2 cursor-pointer hover:bg-light-olive hover:text-dark-olive">

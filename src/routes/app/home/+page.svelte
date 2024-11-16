@@ -1,6 +1,5 @@
 <script lang="ts">
     import { invalidate } from '$app/navigation';
-    import SelectGoalPopup from '$lib/components/SelectGoalPopup.svelte';
     import type { SupabaseClient } from '@supabase/supabase-js';
 	import type { PageData } from './$types';
     import { supabase, user } from '$lib/store';
@@ -26,7 +25,6 @@
         invalidate('supabase:db:user_actions');
     }
 </script>
-<SelectGoalPopup />
 <body>
     <h1>Private page for user: {$user?.email}</h1>
     <h2>Bisherige Actions:</h2>

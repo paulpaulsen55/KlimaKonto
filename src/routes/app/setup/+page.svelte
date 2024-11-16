@@ -9,6 +9,7 @@
     } from "flowbite-svelte";
     import { fly } from "svelte/transition";
     import { user } from "$lib/store";
+    import { goto } from "$app/navigation";
 
     export let data;
     $: ({ supabase } = data);
@@ -27,6 +28,8 @@
             },
         });
         await supabase.from("user_goals").upsert({ goal: goal, id: $user?.id });
+
+        goto("/app/home");
     }
 
     function nextStep() {
@@ -82,7 +85,7 @@
                     name="goal_number"
                     required
                     bind:value={goal}
-                    class="dark:bg-dark-gray"
+                    class="bg-dark-gray"
                     pattern="^[1-9][0-9]*$"
                 />
             </ul>
@@ -97,7 +100,7 @@
                 name="display_name"
                 required
                 bind:value={displayName}
-                class="dark:bg-dark-gray"
+                class="bg-dark-gray"
             />
         </section>
     {/if}
@@ -112,7 +115,13 @@
         <Button
             on:click={() => {
                 nextStep();
-            }}>Weiter</Button
+            }}
         >
+            {#if currentStep == steps.length}
+                Speichern
+            {:else}
+                Weiter
+            {/if}
+        </Button>
     </div>
 </div>

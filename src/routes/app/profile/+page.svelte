@@ -31,10 +31,12 @@
 	async function update(){
         if (goal <= 0 || displayName == "") return;
 
-        await supabase.from("profiles").upsert({
+        const {error: error } = await supabase.from("profiles").upsert({
             user_id: user?.id,
             display_name: displayName,
         });
+		console.log(error);
+		
         await supabase.from("user_goals").upsert({ goal: goal, id: user?.id });
 
 		invalidate("supabase:db:user_goals");

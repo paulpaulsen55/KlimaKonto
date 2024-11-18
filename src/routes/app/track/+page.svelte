@@ -1,5 +1,5 @@
 <script lang="ts">
-    import { invalidate } from '$app/navigation';
+    import { goto } from '$app/navigation';
 	import type { PageData } from './$types';
 
 	export let data: PageData;
@@ -10,10 +10,9 @@
     async function handleSubmit() {
         if (action == 0) return;
 
-        const { error } = await supabase.from('user_actions').insert({ action_id: action, user_id: user?.id });
-        console.log(error);
+        await supabase.from('user_actions').insert({ action_id: action, user_id: user?.id });
         
-        invalidate('supabase:db:actions');
+        goto('/app/home');
     }
 </script>
 

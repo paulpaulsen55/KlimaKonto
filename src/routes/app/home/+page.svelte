@@ -1,5 +1,4 @@
 <script lang="ts">
-    import { invalidate } from "$app/navigation";
     import type { PageData } from "./$types";
     import GoalScore from "$lib/components/GoalScore.svelte";
 
@@ -35,6 +34,8 @@
                         )}</span
                     >
                 </li>
+            {:else}
+                <p class="text-center">No actions yet...</p>
             {/each}
         </ul>
     </div>

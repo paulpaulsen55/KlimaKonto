@@ -1,8 +1,6 @@
 <script lang="ts">
     export let goal: number;
     export let progress = 0;
-
-
 </script>
 
 <div

@@ -5,7 +5,7 @@
 
     export let data: PageData;
 
-    $: ({ goal, score } = data);
+    $: ({ goal, score, daysSinceLastAction } = data);
 
     $: progress = (score / goal) * 100 > 100 ? 100 : (score / goal) * 100;
 </script>
@@ -20,6 +20,14 @@
         >
             {score}
         </h1>
-        <p>6 days ago</p>
+        <p>
+            {#if daysSinceLastAction === 0}
+                today
+            {:else if daysSinceLastAction === 1}
+                {daysSinceLastAction} day ago
+            {:else}
+                {daysSinceLastAction} days ago
+            {/if}
+        </p>
     </div>
 </body>

@@ -26,7 +26,7 @@
             user_id: user?.id,
             display_name: displayName,
         });
-        await supabase.from("user_goals").upsert({ goal: goal, id: $user?.id });
+        await supabase.from("user_goals").upsert({ goal: goal, id: user?.id });
 
         goto("/app/home");
     }

@@ -12,7 +12,7 @@
         <div class="row-span-2 flex justify-center items-center">
             <img src="/Erde.png" alt="earth" class="w-56 z-10"/>
         </div>
-        <form method="POST" action="?/signup" class="z-10">
+        <form method="POST" action="?/register" class="z-10">
             <div class="row-span-2 flex flex-col justify-center items-start text-left z-10">
               <p class="font-bold text-light-olive mb-6">Create your Account</p>
                 <div class="flex flex-col space-y-4 w-full">

@@ -14,7 +14,7 @@
     import { onMount } from "svelte";
 
 	export let data: PageData;
-	$: ({ supabase, userGoal, user } = data)
+	$: ({ supabase, userGoal, user, profile } = data)
 
 	let isOpen = false;
 	let isOpenUsername = false;
@@ -25,7 +25,7 @@
 
 	onMount(() => {
 		goal = userGoal;
-		displayName = user?.user_metadata.display_name;
+		displayName = profile.display_name;
 	})
 
 	async function update(){

@@ -4,7 +4,7 @@
 </script>
 
 <div
-    class="relative bg-light-olive flex flex-col gap-3 justify-center items-center p-5 m-5 rounded-xl text-xl"
+    class="relative bg-light-olive flex flex-col gap-3 justify-center items-center p-5 m-5 rounded-xl text-xl text-black"
 >
     <p>weekly goal:</p>
     <p>{"< " + goal}</p>

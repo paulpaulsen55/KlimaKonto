@@ -5,14 +5,14 @@
 
     export let data: PageData;
 
-    $: ({ goal, score, daysSinceLastAction } = data);
+    $: ({ goal, score, userActions } = data);
 
     $: progress = (score / goal) * 100 > 100 ? 100 : (score / goal) * 100;
 </script>
 
-<body>
+<body class="flex flex-col text-white h-full">
     <GoalScore {goal} bind:progress />
-    <div class="flex flex-col items-center justify-center h-full text-white">
+    <div class="flex flex-col items-center justify-center h-full">
         <h2 class="font-bold text-4xl">SCORE</h2>
         <h1
             style="color: {`hsl(${120 - progress * 1.2}, 60%, 50%)`}"
@@ -20,14 +20,22 @@
         >
             {score}
         </h1>
-        <p>
-            {#if daysSinceLastAction === 0}
-                today
-            {:else if daysSinceLastAction === 1}
-                {daysSinceLastAction} day ago
-            {:else}
-                {daysSinceLastAction} days ago
-            {/if}
-        </p>
+        <p>{Math.ceil((7 - new Date().getDay()) % 7)} days remaining</p>
+    </div>
+    <div>
+        <ul class="p-5 my-auto">
+            {#each userActions as userAction}
+                <li class="flex items-center justify-between gap-5">
+                    <p class="text-xl truncate" title={userAction.actions.name}>
+                        {userAction.actions.name}
+                    </p>
+                    <span class="text-md text-olive"
+                        >{new Date(userAction.created_at).toLocaleDateString(
+                            "de-DE",
+                        )}</span
+                    >
+                </li>
+            {/each}
+        </ul>
     </div>
 </body>

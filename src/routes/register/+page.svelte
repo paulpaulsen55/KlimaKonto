@@ -19,9 +19,6 @@
                   <label for="email">
                     <input id="email" type="email" class="w-full font-bold py-2 px-4 rounded bg-light-olive text-black" name="email" placeholder="E-Mail">
                   </label>
-                  <label for="username">
-                    <input id="username" type="name" class="w-full font-bold py-2 px-4 rounded bg-light-olive text-black" name="username" placeholder="Username">
-                  </label>
                   <label for="password">
                     <input id="password" type="password" class="w-full font-bold py-2 px-4 rounded bg-light-olive text-black" name="password" placeholder="Password">
                   </label>

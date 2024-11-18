@@ -70,15 +70,19 @@
                 class="rounded-lg border bg-dark-gray border-gray-600 divide-y divide-gray-600"
             >
                 <li>
-                    <Radio class="p-3" bind:group={goal} value="20"
-                        >10 - Expert</Radio
+                    <Radio class="p-3" bind:group={goal} value="75"
+                        >75 - Expert</Radio
                     >
                 </li>
                 <li>
-                    <Radio class="p-3" bind:group={goal} value="100">100</Radio>
+                    <Radio class="p-3" bind:group={goal} value="150"
+                        >150 - Advanced</Radio
+                    >
                 </li>
                 <li>
-                    <Radio class="p-3" bind:group={goal} value="200">200</Radio>
+                    <Radio class="p-3" bind:group={goal} value="300"
+                        >300 - Beginner</Radio
+                    >
                 </li>
                 <NumberInput
                     max="1000"

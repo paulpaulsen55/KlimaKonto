@@ -1,4 +1,5 @@
-<script>
+<script lang="ts">
+    import type { PageData } from "./$types";
 	import {
 		AccordionItem,
 		Accordion,
@@ -10,11 +11,10 @@
 	} from "flowbite-svelte";
 	import { CheckCircleSolid } from "flowbite-svelte-icons";
 	import { goto, invalidate } from "$app/navigation";
-    import { user } from "$lib/store";
     import { onMount } from "svelte";
 
-	export let data;
-	$: ({ supabase, userGoal } = data)
+	export let data: PageData;
+	$: ({ supabase, userGoal, user } = data)
 
 	let isOpen = false;
 	let isOpenUsername = false;
@@ -25,18 +25,17 @@
 
 	onMount(() => {
 		goal = userGoal;
-		displayName = $user?.user_metadata.display_name;
+		displayName = user?.user_metadata.display_name;
 	})
 
 	async function update(){
         if (goal <= 0 || displayName == "") return;
 
-        await supabase.auth.updateUser({
-            data: {
-                display_name: displayName,
-            },
+        await supabase.from("profiles").upsert({
+            user_id: user?.id,
+            display_name: displayName,
         });
-        await supabase.from("user_goals").upsert({ goal: goal, id: $user?.id });
+        await supabase.from("user_goals").upsert({ goal: goal, id: user?.id });
 
 		invalidate("supabase:db:user_goals");
 		triggerToast();

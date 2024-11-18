@@ -1,4 +1,5 @@
 <script lang="ts">
+    import type { PageData } from "./$types";
     import {
         StepIndicator,
         Button,
@@ -8,11 +9,10 @@
         Radio,
     } from "flowbite-svelte";
     import { fly } from "svelte/transition";
-    import { user } from "$lib/store";
     import { goto } from "$app/navigation";
 
-    export let data;
-    $: ({ supabase } = data);
+    export let data: PageData;
+    $: ({ supabase, user } = data);
 
     let currentStep = 1;
     let steps = ["Einführung", "Ziel festlegen", "Nutzername"];
@@ -22,10 +22,9 @@
     async function update() {
         if (goal <= 0 || displayName == "") return;
 
-        await supabase.auth.updateUser({
-            data: {
-                display_name: displayName,
-            },
+        await supabase.from("profiles").upsert({
+            user_id: user?.id,
+            display_name: displayName,
         });
         await supabase.from("user_goals").upsert({ goal: goal, id: $user?.id });
 

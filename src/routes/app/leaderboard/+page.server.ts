@@ -8,7 +8,7 @@ export const load: PageServerLoad = async ({ depends, locals: { supabase } }) =>
 			score,
 			user_id (display_name)
 		`
-	).order('score', { ascending: false }).limit(10);
+	).order('score', { ascending: true }).limit(10);
 
 	return { userActions };
 };

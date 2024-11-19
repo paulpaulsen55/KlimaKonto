@@ -1,4 +1,5 @@
 <script lang="ts">
+    import type { PageData } from "./$types";
     import {
         StepIndicator,
         Button,
@@ -8,11 +9,10 @@
         Radio,
     } from "flowbite-svelte";
     import { fly } from "svelte/transition";
-    import { user } from "$lib/store";
     import { goto } from "$app/navigation";
 
-    export let data;
-    $: ({ supabase } = data);
+    export let data: PageData;
+    $: ({ supabase, user } = data);
 
     let currentStep = 1;
     let steps = ["Einführung", "Ziel festlegen", "Nutzername"];
@@ -22,12 +22,11 @@
     async function update() {
         if (goal <= 0 || displayName == "") return;
 
-        await supabase.auth.updateUser({
-            data: {
-                display_name: displayName,
-            },
+        await supabase.from("profiles").upsert({
+            user_id: user?.id,
+            display_name: displayName,
         });
-        await supabase.from("user_goals").upsert({ goal: goal, id: $user?.id });
+        await supabase.from("user_goals").upsert({ goal: goal, id: user?.id });
 
         goto("/app/home");
     }
@@ -70,15 +69,19 @@
                 class="rounded-lg border bg-dark-gray border-gray-600 divide-y divide-gray-600"
             >
                 <li>
-                    <Radio class="p-3" bind:group={goal} value="20"
-                        >10 - Expert</Radio
+                    <Radio class="p-3" bind:group={goal} value="75"
+                        >75 - Expert</Radio
                     >
                 </li>
                 <li>
-                    <Radio class="p-3" bind:group={goal} value="100">100</Radio>
+                    <Radio class="p-3" bind:group={goal} value="150"
+                        >150 - Advanced</Radio
+                    >
                 </li>
                 <li>
-                    <Radio class="p-3" bind:group={goal} value="200">200</Radio>
+                    <Radio class="p-3" bind:group={goal} value="300"
+                        >300 - Beginner</Radio
+                    >
                 </li>
                 <NumberInput
                     max="1000"

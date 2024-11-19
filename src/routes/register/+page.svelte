@@ -12,15 +12,12 @@
         <div class="row-span-2 flex justify-center items-center">
             <img src="/Erde.png" alt="earth" class="w-56 z-10"/>
         </div>
-        <form method="POST" action="?/signup" class="z-10">
+        <form method="POST" action="?/register" class="z-10">
             <div class="row-span-2 flex flex-col justify-center items-start text-left z-10">
               <p class="font-bold text-light-olive mb-6">Create your Account</p>
                 <div class="flex flex-col space-y-4 w-full">
                   <label for="email">
                     <input id="email" type="email" class="w-full font-bold py-2 px-4 rounded bg-light-olive text-black" name="email" placeholder="E-Mail">
-                  </label>
-                  <label for="username">
-                    <input id="username" type="name" class="w-full font-bold py-2 px-4 rounded bg-light-olive text-black" name="username" placeholder="Username">
                   </label>
                   <label for="password">
                     <input id="password" type="password" class="w-full font-bold py-2 px-4 rounded bg-light-olive text-black" name="password" placeholder="Password">

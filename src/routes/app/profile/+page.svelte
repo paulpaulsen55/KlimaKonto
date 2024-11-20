@@ -1,49 +1,75 @@
 <script lang="ts">
-  import { invalidate } from '$app/navigation';
-  import { Accordion, AccordionItem } from 'flowbite-svelte';
-  import { goto } from '$app/navigation';
+  import { Accordion, AccordionItem, Input, NumberInput, Toast, Radio, Label } from 'flowbite-svelte';
+  import { CheckCircleSolid } from "flowbite-svelte-icons";
+  import { goto, invalidate } from '$app/navigation';
   import { user } from '$lib/store';
-  import type { PageData } from './$types';
-
+  import type { PageData, ActionData } from './$types';
+  import { onMount } from "svelte";
 
 	export let data: PageData;
-	$: ({ supabase, userActions, userGoals } = data);
+  export let form: ActionData;
+	$: ({ supabase, userActions, userGoal, profile } = data);
+
+  let displayName = "";
+  let nameError = "";
+	let toastStatus = false;
+  let goal = 0;
+	let counter = 6;
+
+  onMount(() => {
+		goal = userGoal;
+		displayName = profile.display_name;
+	})
 
 	$: logout = async () => {
 		await supabase.auth.signOut();
-        goto('/');
+    goto('/');
 	};
+  
+	async function updateGoal(){
+    if (goal <= 0 || goal > 1000) return;
+		
+    await supabase.from("user_goals").upsert({ goal: goal, id: $user?.id });
 
-  let goal = 0; // Initialisiere `goal`
+		invalidate("supabase:db:user_goals");
+		triggerToast();
+	}
 
-  async function fetchGoal() {
-    const { data, error } = await supabase
-      .from('user_goals') // Tabelle `user_goals`
-      .select('goal') // Wähle das Feld `goal`
-      .eq('id', $user?.id) // Finde den Eintrag für den aktuellen Benutzer
-      .single(); // Liefert nur eine Zeile zurück
+	async function updateProfile(){
+    if (displayName == "") return;
 
-    if (error) {
-      console.error('Fehler beim Abrufen des Ziels:', error.message);
-      return;
-    }
+    const {error: error } = await supabase.from("profiles").upsert({
+        user_id: $user?.id,
+        display_name: displayName,
+    });
+		console.log(error);
 
-    goal = data.goal; // Speichere das Ziel in der Variable
-    console.log('Geladenes Ziel:', goal);
+    if (error) nameError = "Name already taken"; return;
+
+		invalidate("supabase:db:profiles");
+		triggerToast();
+	}
+
+	function triggerToast() {
+		toastStatus = true;
+		counter = 6;
+		timeoutToast();
+	}
+
+  function timeoutToast() {
+    if (--counter > 0) return setTimeout(timeoutToast, 1000);
+    toastStatus = false;
   }
 
-  fetchGoal();
-
-  async function handleSubmit() {
-    await supabase.from('user_goals').upsert({ goal: goal, id: $user?.id });
-        
-    invalidate('supabase:db:user_goals');
-  }
 
   const AccordionItemAny = AccordionItem as any;
 </script>
 
-<div class="p-4 min-h-screen text-light-olive">
+<body class="p-4 min-h-screen text-light-olive">
+  <Toast dismissable={false} bind:toastStatus position="top-left" class="bg-ultra-olive text-white rounded-xl">
+		<CheckCircleSolid slot="icon" color="olive" class="w-5 h-5" />
+		Saved settings
+	</Toast>
 	<div class="max-w-s mx-auto p-4">
 		<!-- Titel -->
 		<h2 class="text-3xl font-bold mb-4">Profile & Settings</h2>
@@ -80,7 +106,7 @@
                 <span>{userAction.actions.score}</span>
         
                 <span class="md:hidden font-bold">Datum:</span>
-                <span>{userAction.created_at}</span>
+                <span>{new Date(userAction.created_at).toLocaleDateString("de-DE",)}</span>
 
                 <form method="POST" action="?/deleteEntry">
                   <input id="id" name="id" class="hidden" value={userAction.id}>
@@ -89,6 +115,8 @@
                   </button>
                 </form>
               </li>
+            {:else}
+              <p class="text-center">No actions yet...</p>
             {/each}
           </ul>
         </div>
@@ -103,15 +131,16 @@
         <img slot="arrowdown" src="/options/ChevronRight.svg" alt="Pfeil rechts" />
 
         <!-- Inhalt -->
-        <div class="flex items-center justify-center p-2">
-          <img src="/options/ChevronLeft.svg" alt="Chevron Left" class="mr-2 mb-8 self-center h-10" />
+        <div class="flex flex-row items-center justify-center p-2">
+          <img src="/options/ChevronLeft.svg" alt="Chevron Left" class="mr-2 mb-12 self-center md:h-12 h-8" />
           <div class="flex flex-col items-center">
-            <form on:submit|preventDefault={handleSubmit}>
-              <input class="font-bold py-10 px-16 bg-gray-olive rounded text-6xl" name="goal" bind:value={goal}>
-              <button type="submit"> commit</button>
-            </form>
-            <span class="text-m mt-2 font-bold">points</span>
+            <input type="number" min=1 max=1000 class="font-bold text-center max-w-40 md:max-w-60 py-10 px-8 bg-gray-olive rounded md:text-6xl text-4xl" name="goal" bind:value={goal}>
+            <button class="hover:bg-light-olive hover:text-dark-olive font-bold mt-2 py-2 px-4 w-full rounded-full bg-olive text-light-olive" on:click={() => updateGoal()}> commit</button>
+            {#if goal <= 0 || goal > 1000}
+              <span class="text-red-500">Please enter a valid goal (1-1000)</span>
+            {/if}
           </div>
+          <span class="text-m ml-4 mb-10 font-bold">points</span>
         </div>
       </AccordionItemAny>
 
@@ -132,13 +161,21 @@
       <!-- change username -->
       <AccordionItemAny class="bg-gray-olive">
         <div slot="header" class="flex w-full justify-between items-center">
-          <span class="p-2 font-bold">change username</span>
+          <span class="p-2 font-bold">update display name</span>
         </div>
         <img slot="arrowup" src="/options/ChevronDown.svg" alt="Pfeil runter" />
         <img slot="arrowdown" src="/options/ChevronRight.svg" alt="Pfeil rechts" />
         <!-- Inhalt -->
-        <div class="flex justify-between items-center p-2">
-          <span class="p-2 font-bold">Not implemented yet</span>
+        <div class="flex flex-col justify-between items-center p-2">
+          <Input class="bg-light-olive text-black mb-2" maxlength={16} bind:value={displayName}/>
+          <button class="hover:bg-light-olive hover:text-dark-olive font-bold mt-2 py-2 px-4 w-full rounded-full bg-olive text-light-olive" on:click={() => updateProfile()}>
+						Save
+					</button>
+          {#if nameError !== ""}	
+          <div class="bg-red-500 text-white p-4 rounded mt-4">
+              <p>{nameError}</p>
+          </div>
+          {/if}
         </div>
       </AccordionItemAny>
 
@@ -164,11 +201,14 @@
         <img slot="arrowup" src="/options/ChevronDown.svg" alt="Pfeil runter" />
         <img slot="arrowdown" src="/options/ChevronRight.svg" alt="Pfeil rechts" />
 
-        <form method="post" action="?/changePassword">
-          <label for="new_password">
-             <input type="password" name="new_password" class="w-full font-bold py-2 px-4 rounded mb-2 bg-light-olive text-black" placeholder="new password" required minlength="6" />
-          </label>
-          <button type="submit" class="flex justify-between items-center bg-gray-olive p-2 rounded-full mt-2 cursor-pointer hover:bg-light-olive hover:text-dark-olive">submit</button>
+        <form method="post" action="?/changePassword" class="flex flex-col items-center">
+          <input type="password" name="new_password" minlength="8" class="w-full font-bold py-2 px-4 mb-2 rounded bg-light-olive text-black" placeholder="new password" required/>
+          <button type="submit" class="hover:bg-light-olive hover:text-dark-olive font-bold mt-2 py-2 px-4 w-full rounded-full bg-olive text-light-olive">submit</button>
+          {#if form?.error}	
+            <div class="bg-red-500 text-white p-4 rounded mb-4">
+              <p>{form.error}</p>
+            </div>
+          {/if}
        </form>
       </AccordionItemAny>
 
@@ -178,4 +218,4 @@
       </button>
     </Accordion>
 	</div>
-</div>
+</body>

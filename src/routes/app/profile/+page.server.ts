@@ -1,6 +1,5 @@
 import type { Actions } from './$types';
 import { fail, redirect } from '@sveltejs/kit';
-import { goto } from '$app/navigation';
 import type { PageServerLoad } from './$types';
 
 export const actions: Actions = {
@@ -46,34 +45,10 @@ export const actions: Actions = {
       }
       console.log(`Eintrag mit ID ${id} gelöscht`);
       return { success: true };
-    },
-   //  changeGoal: async ({ request, locals: {supabase} }) => {
-   //    const formData = await request.formData();
-   //    const goal = formData.get('goal');
-   //    const id = formData.get('id');
-   //    console.log(`${id}: ${goal}`)
-   //    if (!goal || !id) {
-   //       return fail(400, { error: 'Goal oder User ID fehlen.' });
-   //     }
-
-   //    const { data, error } = await supabase
-   //    .from('user_goals') 
-   //    .update({ goal }) 
-   //    .eq('id', id); 
-
-   //   if (error) {
-   //     console.error('Fehler beim Aktualisieren des Ziels:', error.message);
-   //     return fail(500, { error: 'Aktualisieren des Ziels fehlgeschlagen.' });
-   //   }
- 
-   //   return {
-   //     success: true,
-   //     updatedGoal: data
-   //   };
-   // },
+   },
 };
 
-export const load: PageServerLoad = async ({ depends, locals: { supabase } }) => {
+export const load: PageServerLoad = async ({ depends, locals: { supabase, user } }) => {
 	depends('supabase:db:user_actions', 'supabase:db:actions');
 	
 	const { data: userActions } = await supabase.from('user_actions').select(
@@ -85,8 +60,8 @@ export const load: PageServerLoad = async ({ depends, locals: { supabase } }) =>
 	);
 	
    const { data: actions } = await supabase.from('actions').select('id, score, name, category');
-   const { data: userGoals } = await supabase.from('user_goals').select('id, goal');
+   const { data: userGoal } = await supabase.from('user_goals').select('id, goal').single();
+   const { data : profile} = await supabase.from('profiles').select('display_name').eq('user_id', user?.id).single();
 
-
-	return { userActions: userActions ?? [], actions: actions ?? [], userGoals: userGoals ?? [] };
+	return { userActions: userActions ?? [], actions: actions ?? [], userGoal: userGoal.goal ?? [], profile };
 };

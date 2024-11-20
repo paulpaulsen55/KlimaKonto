@@ -4,12 +4,14 @@
   import { goto, invalidate } from '$app/navigation';
   import { user } from '$lib/store';
   import type { PageData, ActionData } from './$types';
+  import { page } from '$app/stores';
   import { onMount } from "svelte";
 
 	export let data: PageData;
   export let form: ActionData;
 	$: ({ supabase, userActions, userGoal, profile } = data);
 
+  let isFirstOpen = false;
   let displayName = "";
   let nameError = "";
 	let toastStatus = false;
@@ -19,6 +21,10 @@
   onMount(() => {
 		goal = userGoal;
 		displayName = profile.display_name;
+    const params = new URLSearchParams($page.url.search);
+    if (params.get('open') === 'first') {
+      isFirstOpen = true;
+    }
 	})
 
 	$: logout = async () => {
@@ -68,7 +74,7 @@
   const AccordionItemAny = AccordionItem as any;
 </script>
 
-<body class="p-4 min-h-screen text-light-olive">
+<body class="p-4 min-h-screen text-light-olive pb-[9.09vh]">
   <Toast dismissable={false} bind:toastStatus position="top-left" class="bg-ultra-olive text-white rounded-xl">
 		<CheckCircleSolid slot="icon" color="olive" class="w-5 h-5" />
 		Saved settings
@@ -79,10 +85,10 @@
 
 		<!-- Akkordion -->
     <Accordion>
-      <!-- recent tracks  -->
-      <AccordionItemAny class="bg-gray-olive">
+      <!-- recent actions  -->
+      <AccordionItemAny bind:open={isFirstOpen} class="bg-gray-olive">
         <div slot="header" class="flex w-full justify-between items-center">
-          <span class="p-2 font-bold">recent tracks</span>
+          <span class="p-2 font-bold">recent actions</span>
         </div>
         <img slot="arrowup" src="/options/ChevronDown.svg" alt="Pfeil runter" />
         <img slot="arrowdown" src="/options/ChevronRight.svg" alt="Pfeil rechts" />
@@ -98,7 +104,7 @@
             </li>
         
             <!-- User Actions -->
-            {#each userActions.slice(-5) as userAction}
+            {#each userActions.slice(-20) as userAction}
               <li
                 class="grid grid-cols-1 gap-y-2 p-2 border-b border-gray-300 md:grid-cols-[1fr_1fr_1fr_1fr] md:gap-x-8 md:p-0 md:border-none"
               >

@@ -15,7 +15,7 @@
     $: ({ supabase, user } = data);
 
     let currentStep = 1;
-    let steps = ["Intorduction", "Set personal goal", "Set display name"];
+    let steps = ["Introduction", "Set personal goal", "Set display name"];
     let goal = 500;
     let displayName = "";
     let nameError = "";

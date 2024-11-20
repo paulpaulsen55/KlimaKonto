@@ -1,3 +1,8 @@
+<script lang="ts">
+  import type { ActionData } from "./$types";
+  export let form: ActionData;
+</script>
+
 <div class="relative overflow-hidden">
   <img class="background-image tri1" src="/tri_happy.png" alt="happy triangle" />
   <img class="background-image tri2" src="/tri_happy.png" alt="happy triangle" />
@@ -23,6 +28,11 @@
                   <input id="password" type="password" class="w-full font-bold py-2 px-4 rounded bg-light-olive text-black" name="password" placeholder="Password">
                 </label>
                 <button class="w-full font-bold py-2 px-4 rounded bg-olive text-light-olive">Login</button>
+                {#if form?.error}	
+                  <div class="bg-red-500 text-white p-4 rounded mb-4">
+                    <p>{form.error}</p>
+                  </div>
+                {/if}
                 <p class="font-bold text-light-olive mb-6">Need an Account? <a class="underline text-bg-olive" href="/register">Register</a></p>
                 <a class="font-bold underline text-light-olive" href="/">Home</a>
               </div>        

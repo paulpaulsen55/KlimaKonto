@@ -8,10 +8,10 @@ export const actions: Actions = {
         const email = formData.get('email') as string
         const password = formData.get('password') as string
 
-        const { error } = await supabase.auth.signInWithPassword({ email, password })
+        const { error: error } = await supabase.auth.signInWithPassword({ email, password })
         if (error) {
             return fail(400, { error: 'Invalid email or password' })
-        } else {
+                } else {
             redirect(303, '/app/home')
         }
     },

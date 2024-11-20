@@ -15,20 +15,37 @@
     $: ({ supabase, user } = data);
 
     let currentStep = 1;
-    let steps = ["Einführung", "Ziel festlegen", "Nutzername"];
-    let goal = 1;
+    let steps = ["Intorduction", "Set personal goal", "Set display name"];
+    let goal = 500;
     let displayName = "";
+    let nameError = "";
+    let goalError = "";
 
     async function update() {
-        if (goal <= 0 || displayName == "") return;
+        goalError = "";
+        nameError = "";
+        if (goal <= 0 || goal > 1000) {
+            goalError = "Please select a goal between 1 and 1000.";
+            currentStep = 2;
+            return;
+        }
+        if (displayName == "") {
+            nameError = "Please select a display name.";
+            currentStep = 3;
+            return;
+        }
 
-        await supabase.from("profiles").upsert({
+        await supabase.from("user_goals").upsert({ goal: goal, id: user?.id });
+        const {error: sError } = await supabase.from("profiles").upsert({
             user_id: user?.id,
             display_name: displayName,
         });
-        await supabase.from("user_goals").upsert({ goal: goal, id: user?.id });
 
-        goto("/app/home");
+        if (sError){
+            nameError = "Display name is already taken.";
+        } else {
+            goto("/app/home");
+        }
     }
 
     function nextStep() {
@@ -59,14 +76,21 @@
         class="z-50 fuck-flowbite"
     />
     {#if currentStep == 1}
-        <section in:fly={{ x: 10 }} class="">
-            <p>Hier wird eine Einführung stehen.</p>
+        <section in:fly={{ x: 10 }} class="flex flex-col items-center">
+            <p>
+                CO2ntrol helps you track your daily activities and work towards a climate-neutral lifestyle. 
+                The goal is simple: earn as few points as possible to minimize your carbon footprint. 
+                Set a weekly target, monitor your progress, and stay motivated as you strive to make sustainable choices. 
+                Your personalized dashboard keeps you updated on how many points you have left to "spend" for the week. 
+                Ready to take control and make a difference? Let’s start your journey to a greener future!
+            </p>
+            <img src="/tri_happy.png" alt="happy">
         </section>
     {:else if currentStep == 2}
         <section in:fly={{ x: 10, delay: 1 }}>
             <Label for="goal" class="mb-4 font-semibold">Weekly goal</Label>
             <ul
-                class="rounded-lg border bg-dark-gray border-gray-600 divide-y divide-gray-600"
+                class="rounded-lg border bg-dark-gray border-gray-600 divide-y divide-gray-600 mb-4"
             >
                 <li>
                     <Radio class="p-3" bind:group={goal} value="75"
@@ -84,27 +108,35 @@
                     >
                 </li>
                 <NumberInput
-                    max="1000"
                     name="goal_number"
                     required
                     bind:value={goal}
                     class="bg-dark-gray"
-                    pattern="^[1-9][0-9]*$"
                 />
             </ul>
+            {#if goalError !== ""}	
+                <div class="bg-red-500 text-white p-4 rounded mb-4">
+                    <p>{goalError}</p>
+                </div>
+            {/if}
         </section>
     {:else if currentStep == 3}
         <section in:fly={{ x: 10, delay: 1 }}>
             <Label for="display_name" class="mb-4 font-semibold"
-                >Display Name</Label
+                >Display name</Label
             >
             <Input
                 type="text"
                 name="display_name"
                 required
                 bind:value={displayName}
-                class="bg-dark-gray"
+                class="bg-dark-gray mb-4"
             />
+            {#if nameError !== ""}	
+                <div class="bg-red-500 text-white p-4 rounded mb-4">
+                    <p>{nameError}</p>
+                </div>
+            {/if}
         </section>
     {/if}
 
@@ -113,7 +145,7 @@
             class=""
             on:click={() => {
                 prevStep();
-            }}>Zurück</Button
+            }}>Back</Button
         >
         <Button
             on:click={() => {
@@ -121,9 +153,9 @@
             }}
         >
             {#if currentStep == steps.length}
-                Speichern
+                Save
             {:else}
-                Weiter
+                Next
             {/if}
         </Button>
     </div>

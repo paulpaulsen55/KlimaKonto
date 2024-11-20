@@ -23,7 +23,7 @@
     </div>
     <div>
         <ul class="p-5 my-auto text-light-olive flex flex-col md:flex-row md:items-center justify-between md:gap-5">
-            <li class="flex flex-col md:flex-row md:items-center justify-between md:gap-5">
+            <li class="flex items-center justify-between gap-5">
                 <p class="text-xl font-bold">Recent actions</p>
                 <a href="/app/profile?open=first" class="text-md font-bold text-olive">See all</a>
             </li>

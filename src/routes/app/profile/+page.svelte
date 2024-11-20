@@ -108,13 +108,13 @@
               <li
                 class="grid grid-cols-1 gap-y-2 p-2 border-b border-gray-300 md:grid-cols-[1fr_1fr_1fr_1fr] md:gap-x-8 md:p-0 md:border-none"
               >
-                <span class="md:hidden font-bold">Aktion:</span>
+                <span class="md:hidden font-bold">Action:</span>
                 <span>{userAction.actions.name}</span>
         
-                <span class="md:hidden font-bold">Punkte:</span>
+                <span class="md:hidden font-bold">Points:</span>
                 <span>{userAction.actions.score}</span>
         
-                <span class="md:hidden font-bold">Datum:</span>
+                <span class="md:hidden font-bold">Date:</span>
                 <span>{new Date(userAction.created_at).toLocaleDateString("de-DE",)}</span>
 
                 <form method="POST" action="?/deleteEntry">

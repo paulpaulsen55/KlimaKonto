@@ -25,6 +25,7 @@ export default {
                 'light-olive': '#D0E7D2',
                 'dark-gray': '#1E1E1E',
                 'gray': '#2B2E2C',
+                'gray-olive': '#43584D',
             },
         },
     plugins: [flowbitePlugin],

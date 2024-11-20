@@ -1,45 +1,55 @@
 <script lang="ts">
-    import type { PageData } from "./$types";
-	import {
-		AccordionItem,
-		Accordion,
-		Label,
-		Radio,
-		NumberInput,
-        Input,
-        Toast,
-	} from "flowbite-svelte";
-	import { CheckCircleSolid } from "flowbite-svelte-icons";
-	import { goto, invalidate } from "$app/navigation";
-    import { onMount } from "svelte";
+  import { Accordion, AccordionItem, Input, NumberInput, Toast, Radio, Label } from 'flowbite-svelte';
+  import { CheckCircleSolid } from "flowbite-svelte-icons";
+  import { goto, invalidate } from '$app/navigation';
+  import { user } from '$lib/store';
+  import type { PageData, ActionData } from './$types';
+  import { onMount } from "svelte";
 
 	export let data: PageData;
-	$: ({ supabase, userGoal, user, profile } = data)
+  export let form: ActionData;
+	$: ({ supabase, userActions, userGoal, profile } = data);
 
-	let isOpen = false;
-	let isOpenUsername = false;
-	let displayName = "";
-	let goal = 0;
+  let displayName = "";
+  let nameError = "";
 	let toastStatus = false;
+  let goal = 0;
 	let counter = 6;
 
-	onMount(() => {
+  onMount(() => {
 		goal = userGoal;
 		displayName = profile.display_name;
 	})
 
-	async function update(){
-        if (goal <= 0 || displayName == "") return;
-
-        const {error: error } = await supabase.from("profiles").upsert({
-            user_id: user?.id,
-            display_name: displayName,
-        });
-		console.log(error);
+	$: logout = async () => {
+		await supabase.auth.signOut();
+    goto('/');
+	};
+  
+	async function updateGoal(){
+    if (goal <= 0 || goal > 1000) return;
 		
-        await supabase.from("user_goals").upsert({ goal: goal, id: user?.id });
+    await supabase.from("user_goals").upsert({ goal: goal, id: $user?.id });
 
 		invalidate("supabase:db:user_goals");
+		triggerToast();
+	}
+
+	async function updateProfile(){
+    if (displayName == "") return;
+
+    const {error: error } = await supabase.from("profiles").upsert({
+        user_id: $user?.id,
+        display_name: displayName,
+    });
+		console.log(error);
+
+    if (error) {
+      nameError = "Name already taken"; 
+      return;
+    }
+    
+		invalidate("supabase:db:profiles");
 		triggerToast();
 	}
 
@@ -54,14 +64,12 @@
     toastStatus = false;
   }
 
-	$: logout = async () => {
-		await supabase.auth.signOut();
-		goto("/");
-	};
+
+  const AccordionItemAny = AccordionItem as any;
 </script>
 
-<div class="p-4 h-full text-light-olive">
-	<Toast dismissable={false} bind:toastStatus position="top-left" class="bg-ultra-olive text-white rounded-xl">
+<body class="p-4 min-h-screen text-light-olive">
+  <Toast dismissable={false} bind:toastStatus position="top-left" class="bg-ultra-olive text-white rounded-xl">
 		<CheckCircleSolid slot="icon" color="olive" class="w-5 h-5" />
 		Saved settings
 	</Toast>
@@ -69,155 +77,148 @@
 		<!-- Titel -->
 		<h2 class="text-3xl font-bold mb-4">Profile & Settings</h2>
 
-		<!-- Logout -->
-		<button
-			on:click={logout}
-			class="flex w-full justify-between items-center bg-olive p-2 rounded-full mb-2 cursor-pointer hover:bg-light-olive hover:text-dark-olive"
-		>
-			<p class="p-2 font-bold">Logout</p>
-			<img src="/options/ChevronRight.svg" alt="Pfeil rechts" />
-		</button>
+		<!-- Akkordion -->
+    <Accordion>
+      <!-- recent tracks  -->
+      <AccordionItemAny class="bg-gray-olive">
+        <div slot="header" class="flex w-full justify-between items-center">
+          <span class="p-2 font-bold">recent tracks</span>
+        </div>
+        <img slot="arrowup" src="/options/ChevronDown.svg" alt="Pfeil runter" />
+        <img slot="arrowdown" src="/options/ChevronRight.svg" alt="Pfeil rechts" />
 
-		<!-- recent tracks -->
-		<div
-			class="flex justify-between items-center bg-olive p-2 rounded-full mb-2 cursor-pointer hover:bg-light-olive hover:text-dark-olive"
-		>
-			<span class="p-2 font-bold">recent tracks</span>
-			<img src="/options/ChevronRight.svg" alt="Pfeil rechts" />
-		</div>
+        <div class="flex justify-center items-center p-2 cursor-pointer">
+          <ul class="w-full">
+            <!-- Header -->
+            <li class="hidden md:grid md:grid-cols-[1fr_1fr_1fr_1fr] md:gap-x-8 font-bold">
+              <span>Actions</span>
+              <span>Points</span>
+              <span>Date</span>
+              <span>Delete</span>
+            </li>
+        
+            <!-- User Actions -->
+            {#each userActions.slice(-5) as userAction}
+              <li
+                class="grid grid-cols-1 gap-y-2 p-2 border-b border-gray-300 md:grid-cols-[1fr_1fr_1fr_1fr] md:gap-x-8 md:p-0 md:border-none"
+              >
+                <span class="md:hidden font-bold">Aktion:</span>
+                <span>{userAction.actions.name}</span>
+        
+                <span class="md:hidden font-bold">Punkte:</span>
+                <span>{userAction.actions.score}</span>
+        
+                <span class="md:hidden font-bold">Datum:</span>
+                <span>{new Date(userAction.created_at).toLocaleDateString("de-DE",)}</span>
 
-		<!-- weekly goal (mit Dropdown-Option) -->
-		<Accordion flush class="max-w-s mx-auto -mt-5 -mb-3">
-			<AccordionItem bind:open={isOpen} borderBottomClass="border-none">
-				<!-- Header im Accordion so stylen wie das div -->
-				<div
-					slot="header"
-					class="flex w-full justify-between items-center bg-olive p-2 rounded-full cursor-pointer hover:bg-light-olive hover:text-dark-olive"
-				>
-					<span class="p-2 font-bold">weekly goal</span>
-					{#if isOpen}
-						<img
-							src="/options/ChevronDown.svg"
-							alt="Pfeil runter"
-						/>
-					{:else}
-						<img
-							src="/options/ChevronRight.svg"
-							alt="Pfeil rechts"
-						/>
-					{/if}
-				</div>
+                <form method="POST" action="?/deleteEntry">
+                  <input id="id" name="id" class="hidden" value={userAction.id}>
+                  <button type="submit" class="font-bold hover:text-olive">
+                    Delete
+                  </button>
+                </form>
+              </li>
+            {:else}
+              <p class="text-center">No actions yet...</p>
+            {/each}
+          </ul>
+        </div>
+      </AccordionItemAny>
 
-				<div slot="arrowup" hidden />
-				<div slot="arrowdown" hidden />
+      <!-- weekly goal -->
+      <AccordionItemAny class="bg-gray-olive">
+        <div slot="header" class="flex w-full justify-between items-center">
+          <span class="p-2 font-bold">weekly goal</span>
+        </div>
+        <img slot="arrowup" src="/options/ChevronDown.svg" alt="Pfeil runter" />
+        <img slot="arrowdown" src="/options/ChevronRight.svg" alt="Pfeil rechts" />
 
-				<!-- Inhalt des AccordionItem -->
-				<div
-					class="flex flex-col justify-between items-center bg-olive p-2 rounded-lg mb-2 cursor-pointer -mt-5"
-				>
-					<Label for="goal" class="mb-4 font-semibold"
-						>Update your weekly goal</Label
-					>
-					<ul
-						class="rounded-lg border bg-dark-gray border-gray-600 divide-y divide-gray-600"
-					>
-						<li>
-							<Radio class="p-3" bind:group={goal} value="75"
-								>75 - Expert</Radio
-							>
-						</li>
-						<li>
-							<Radio class="p-3" bind:group={goal} value="150"
-								>150 - Advanced</Radio
-							>
-						</li>
-						<li>
-							<Radio class="p-3" bind:group={goal} value="300"
-								>300 - Beginner</Radio
-							>
-						</li>
-						<li>
-							<NumberInput
-								max="1000"
-								name="goal_number"
-								required
-								bind:value={goal}
-								class="bg-dark-gray"
-								pattern="^[1-9][0-9]*$"
-							/>
-						</li>
-						<li class="p-3">
-							<button
-								class="bg-light-olive text-dark-olive font-bold py-2 px-4 w-full rounded-full hover:bg-dark-olive hover:text-light-olive"
-								on:click={() => update()}
-							>
-								Save
-							</button>
-						</li>
-					</ul>
-				</div>
-			</AccordionItem>
-		</Accordion>
+        <!-- Inhalt -->
+        <div class="flex flex-row items-center justify-center p-2">
+          <img src="/options/ChevronLeft.svg" alt="Chevron Left" class="mr-2 mb-12 self-center md:h-12 h-8" />
+          <div class="flex flex-col items-center">
+            <input type="number" min=1 max=1000 class="font-bold text-center max-w-40 md:max-w-60 py-10 px-8 bg-gray-olive rounded md:text-6xl text-4xl" name="goal" bind:value={goal}>
+            <button class="hover:bg-light-olive hover:text-dark-olive font-bold mt-2 py-2 px-4 w-full rounded-full bg-olive text-light-olive" on:click={() => updateGoal()}> commit</button>
+            {#if goal <= 0 || goal > 1000}
+              <span class="text-red-500">Please enter a valid goal (1-1000)</span>
+            {/if}
+          </div>
+          <span class="text-m ml-4 mb-10 font-bold">points</span>
+        </div>
+      </AccordionItemAny>
 
-		<!-- Andere Optionen -->
-		<div
-			class="flex justify-between items-center bg-olive p-2 rounded-full mb-2 cursor-pointer hover:bg-light-olive hover:text-dark-olive"
-		>
-			<span class="p-2 font-bold">friends</span>
-			<img src="/options/ChevronRight.svg" alt="Pfeil rechts" />
-		</div>
-		<Accordion flush class="max-w-s mx-auto -mt-5 -mb-3">
-			<AccordionItem bind:open={isOpenUsername} borderBottomClass="border-none">
-				<!-- Header im Accordion so stylen wie das div -->
-				<div
-					slot="header"
-					class="flex w-full justify-between items-center bg-olive p-2 rounded-full cursor-pointer hover:bg-light-olive hover:text-dark-olive"
-				>
-					<span class="p-2 font-bold">username</span>
-					{#if isOpenUsername}
-						<img
-							src="/options/ChevronDown.svg"
-							alt="Pfeil runter"
-						/>
-					{:else}
-						<img
-							src="/options/ChevronRight.svg"
-							alt="Pfeil rechts"
-						/>
-					{/if}
-				</div>
+      <!-- view friends -->
+      <AccordionItemAny class="bg-gray-olive">
+        <div slot="header" class="flex w-full justify-between items-center">
+          <span class="p-2 font-bold">view friends</span>
+        </div>
+        <img slot="arrowup" src="/options/ChevronDown.svg" alt="Pfeil runter" />
+        <img slot="arrowdown" src="/options/ChevronRight.svg" alt="Pfeil rechts" />
 
-				<div slot="arrowup" hidden />
-				<div slot="arrowdown" hidden />
-
-				<!-- Inhalt des AccordionItem -->
-				<div
-					class="flex flex-col gap-5 justify-between items-center bg-olive p-2 rounded-lg mb-2 cursor-pointer -mt-5"
-				>
-					<Label for="goal" class="mb-4 font-semibold"
-						>Update your displayed name</Label
-					>
-					<Input class="bg-dark-gray" maxlength={16} bind:value={displayName}/>
-					<button
-						class="bg-light-olive text-dark-olive font-bold py-2 px-4 w-full rounded-full hover:bg-dark-olive hover:text-light-olive"
-						on:click={() => update()}
-					>
+        <!-- Inhalt -->
+        <div class="flex justify-between items-center p-2">
+          <span class="p-2 font-bold">You don't have any friends</span>
+        </div>
+      </AccordionItemAny>
+      
+      <!-- change username -->
+      <AccordionItemAny class="bg-gray-olive">
+        <div slot="header" class="flex w-full justify-between items-center">
+          <span class="p-2 font-bold">update display name</span>
+        </div>
+        <img slot="arrowup" src="/options/ChevronDown.svg" alt="Pfeil runter" />
+        <img slot="arrowdown" src="/options/ChevronRight.svg" alt="Pfeil rechts" />
+        <!-- Inhalt -->
+        <div class="flex flex-col justify-between items-center p-2">
+          <Input class="bg-light-olive text-black mb-2" maxlength={16} bind:value={displayName}/>
+          <button class="hover:bg-light-olive hover:text-dark-olive font-bold mt-2 py-2 px-4 w-full rounded-full bg-olive text-light-olive" on:click={() => updateProfile()}>
 						Save
 					</button>
-				</div>
-			</AccordionItem>
-		</Accordion>
-		<div
-			class="flex justify-between items-center bg-olive p-2 rounded-full mb-2 cursor-pointer hover:bg-light-olive hover:text-dark-olive"
-		>
-			<span class="p-2 font-bold">profile picture</span>
-			<img src="/options/ChevronRight.svg" alt="Pfeil rechts" />
-		</div>
-		<div
-			class="flex justify-between items-center bg-olive p-2 rounded-full cursor-pointer hover:bg-light-olive hover:text-dark-olive"
-		>
-			<span class="p-2 font-bold">password</span>
-			<img src="/options/ChevronRight.svg" alt="Pfeil rechts" />
-		</div>
+          {#if nameError !== ""}	
+          <div class="bg-red-500 text-white p-4 rounded mt-4">
+              <p>{nameError}</p>
+          </div>
+          {/if}
+        </div>
+      </AccordionItemAny>
+
+      <!-- change profile picture -->
+      <AccordionItemAny class="bg-gray-olive">
+        <div slot="header" class="flex w-full justify-between items-center">
+          <span class="p-2 font-bold">change profile picture</span>
+        </div>
+        <img slot="arrowup" src="/options/ChevronDown.svg" alt="Pfeil runter" />
+        <img slot="arrowdown" src="/options/ChevronRight.svg" alt="Pfeil rechts" />
+
+        <!-- Inhalt -->
+        <div class="flex justify-between items-center p-2">
+          <span class="p-2 font-bold">Not implemented yet</span>
+        </div>
+      </AccordionItemAny>
+      
+      <!-- change password -->
+      <AccordionItemAny class="bg-gray-olive">
+        <div slot="header" class="flex w-full justify-between items-center">
+          <span class="p-2 font-bold">change password</span>
+        </div>
+        <img slot="arrowup" src="/options/ChevronDown.svg" alt="Pfeil runter" />
+        <img slot="arrowdown" src="/options/ChevronRight.svg" alt="Pfeil rechts" />
+
+        <form method="post" action="?/changePassword" class="flex flex-col items-center">
+          <input type="password" name="new_password" minlength="8" class="w-full font-bold py-2 px-4 mb-2 rounded bg-light-olive text-black" placeholder="new password" required/>
+          <button type="submit" class="hover:bg-light-olive hover:text-dark-olive font-bold mt-2 py-2 px-4 w-full rounded-full bg-olive text-light-olive">submit</button>
+          {#if form?.error}	
+            <div class="bg-red-500 text-white p-4 rounded mb-4">
+              <p>{form.error}</p>
+            </div>
+          {/if}
+       </form>
+      </AccordionItemAny>
+
+      <!-- logout -->
+      <button type="button" on:click={logout} class="w-full flex justify-between items-center p-4 cursor-pointer border border-t-0 bg-gray-olive">
+        <span class="p-3 font-bold">logout</span>
+      </button>
+    </Accordion>
 	</div>
-</div>
+</body>

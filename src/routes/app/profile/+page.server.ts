@@ -1,7 +1,6 @@
 import type { Actions } from './$types';
 import { fail } from '@sveltejs/kit';
 import type { PageServerLoad } from './$types';
-import { invalidate } from '$app/navigation';
 
 export const actions: Actions = {
    changePassword: async ({ request, locals: { supabase } }) => {

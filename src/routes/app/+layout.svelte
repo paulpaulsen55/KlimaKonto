@@ -1,14 +1,12 @@
 <script>
-    import { goto } from '$app/navigation';
 	import { page } from '$app/stores';
-
-	export let data;
-	$: ({ supabase } = data);
 </script>
 
-<div class="bg-dark-olive fixed inset-0 overflow-y-auto">
-	<slot />
-    <footer class="bg-ultra-olive fixed bottom-0 w-full h-[9.09vh] flex justify-around items-center p-4">
+<div class="bg-dark-olive fixed inset-0  flex flex-col justify-between">
+	<div class="overflow-y-auto h-full">
+		<slot />
+	</div>
+    <nav class="bg-ultra-olive w-full h-16 flex justify-around items-center p-4">
 		<div class="flex justify-between w-full max-w-md mx-auto text-light-olive">
 			<a href="/app/home" class="flex-1 text-center">
 				<button class="w-full rounded-full p-2" class:bg-dark-gray={$page.url.pathname === '/app/home'}>
@@ -41,6 +39,5 @@
 				</button>
 			</a>
 		</div>
-	</footer>
+	</nav>
 </div>
-

@@ -9,7 +9,7 @@
     $: progress = (score / goal) * 100 > 100 ? 100 : (score / goal) * 100;
 </script>
 
-<body class="flex flex-col text-white h-full pb-[9.09vh]">
+<body class="flex flex-col text-white h-full">
     <GoalScore {goal} bind:progress />
     <div class="flex flex-col items-center justify-center h-full">
         <h2 class="font-bold text-4xl">SCORE</h2>

@@ -90,7 +90,7 @@
         <section in:fly={{ x: 10, delay: 1 }}>
             <Label for="goal" class="mb-4 font-semibold">Weekly goal</Label>
             <ul
-                class="rounded-lg border bg-dark-gray border-gray-600 divide-y divide-gray-600 mb-4"
+                class="rounded-lg border bg-ultra-olive border-gray-600 divide-y divide-gray-600 mb-4"
             >
                 <li>
                     <Radio class="p-3" bind:group={goal} value="75"
@@ -111,7 +111,7 @@
                     name="goal_number"
                     required
                     bind:value={goal}
-                    class="bg-dark-gray"
+                    class="bg-ultra-olive"
                 />
             </ul>
             {#if goalError !== ""}	

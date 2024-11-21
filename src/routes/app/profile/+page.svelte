@@ -86,10 +86,14 @@
                 <span class="md:hidden font-bold">Date:</span>
                 <span>{new Date(userAction.created_at).toLocaleDateString("de-DE",)}</span>
 
-                <form method="POST" action="?/deleteEntry">
+                <EnhancedForm 
+                  action="?/deleteEntry" 
+                  error={(form?.error && form.error.target === 0) ? form.error.message : ""} 
+                  on:complete={(e) => triggerToast(e)}
+                >
                   <input id="id" name="id" class="hidden" value={userAction.id} required>
                   <button type="submit" class="font-bold hover:text-olive">Delete</button>
-                </form>
+                </EnhancedForm>
               </li>
             {:else}
               <p class="text-center">No actions yet...</p>

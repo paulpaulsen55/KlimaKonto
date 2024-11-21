@@ -1,7 +1,7 @@
 <script lang="ts">
-  import { Accordion, AccordionItem, Toast, Radio } from 'flowbite-svelte';
+  import { Accordion, AccordionItem, Toast, Radio, Table, TableHead, TableHeadCell, TableBody, TableBodyRow, TableBodyCell } from 'flowbite-svelte';
   import { CheckCircleSolid } from "flowbite-svelte-icons";
-  import { goto, invalidate } from '$app/navigation';
+  import { goto } from '$app/navigation';
   import type { PageData, ActionData } from './$types';
   import { page } from '$app/stores';
   import { onMount } from "svelte";
@@ -64,42 +64,40 @@
         <img slot="arrowup" src="/options/ChevronDown.svg" alt="Pfeil runter" />
         <img slot="arrowdown" src="/options/ChevronRight.svg" alt="Pfeil rechts" />
 
-        <div class="flex justify-center items-center p-2 cursor-pointer">
-          <ul class="w-full">
-            <!-- Header -->
-            <li class="hidden md:grid md:grid-cols-[1fr_1fr_1fr_1fr] md:gap-x-8 font-bold">
-              <span>Actions</span>
-              <span>Points</span>
-              <span>Date</span>
-              <span>Delete</span>
-            </li>
-        
-            <!-- User Actions -->
+        <Table hoverable={true}>
+          <TableHead class="bg-gray-olive">
+            <TableHeadCell>Actions</TableHeadCell>
+            <TableHeadCell>Points</TableHeadCell>
+            <TableHeadCell>Date</TableHeadCell>
+            <TableHeadCell>
+              <span class="sr-only">Delete</span>
+            </TableHeadCell>
+          </TableHead>
+          <TableBody tableBodyClass="divide-y">
             {#each userActions as userAction}
-              <li class="grid grid-cols-1 gap-y-2 p-2 border-b border-gray-300 md:grid-cols-[1fr_1fr_1fr_1fr] md:gap-x-8 md:p-0 md:border-none">
-                <span class="md:hidden font-bold">Action:</span>
-                <span>{userAction.actions.name}</span>
-        
-                <span class="md:hidden font-bold">Points:</span>
-                <span>{userAction.actions.score}</span>
-        
-                <span class="md:hidden font-bold">Date:</span>
-                <span>{new Date(userAction.created_at).toLocaleDateString("de-DE",)}</span>
-
-                <EnhancedForm 
-                  action="?/deleteEntry" 
-                  error={(form?.error && form.error.target === 0) ? form.error.message : ""} 
-                  on:complete={(e) => triggerToast(e)}
-                >
-                  <input id="id" name="id" class="hidden" value={userAction.id} required>
-                  <button type="submit" class="font-bold hover:text-olive">Delete</button>
-                </EnhancedForm>
-              </li>
+              <TableBodyRow class="bg-ultra-olive">
+                <TableBodyCell>{userAction.actions.name}</TableBodyCell>
+                <TableBodyCell>{userAction.actions.score}</TableBodyCell>
+                <TableBodyCell>{new Date(userAction.created_at).toLocaleDateString("de-DE")}</TableBodyCell>
+                <TableBodyCell>
+                  <EnhancedForm 
+                    action="?/deleteEntry" 
+                    error={(form?.error && form.error.target === 0) ? form.error.message : ""} 
+                    on:complete={(e) => triggerToast(e)}
+                  >
+                    <input id="id" name="id" class="hidden" value={userAction.id} required>
+                    <button type="submit" class="font-bold text-primary-600 dark:text-primary-500 hover:underline hover:text-olive">Delete</button>
+                  </EnhancedForm>
+                </TableBodyCell>
+              </TableBodyRow>
             {:else}
-              <p class="text-center">No actions yet...</p>
+              <TableBodyRow>
+                <TableBodyCell colspan={4} class="text-center">No actions yet...</TableBodyCell>
+              </TableBodyRow>
             {/each}
-          </ul>
-        </div>
+
+          </TableBody>
+        </Table>
       </AccordionItemAny>
 
       <!-- weekly goal -->
@@ -114,7 +112,7 @@
           error={(form?.error && form.error.target === 1) ? form.error.message : ""} 
           on:complete={(e) => triggerToast(e)}
         >
-          <ul class="rounded-lg border bg-dark-gray border-gray-600 divide-y divide-gray-600 mb-4">
+          <ul class="rounded-lg border bg-ultra-olive border-gray-600 divide-y divide-gray-600 mb-4">
             <li>
                 <Radio name="goal" class="p-3" bind:group={goal} value="75">75 - Expert</Radio>
             </li>
@@ -124,7 +122,7 @@
             <li>
                 <Radio name="goal" class="p-3" bind:group={goal} value="300">300 - Beginner</Radio>
             </li>
-            <input type="number" required min="1" max="1000" name="goal" bind:value={goal} class="bg-dark-gray w-full font-bold py-2 px-4 rounded-b-lg"/>
+            <input type="number" required min="1" max="1000" name="goal" bind:value={goal} class="bg-ultra-olive w-full font-bold py-2 px-4 rounded-b-lg"/>
           </ul>
           <button type="submit" class="hover:bg-light-olive hover:text-dark-olive font-bold mt-2 py-2 px-4 w-full rounded-full bg-olive text-light-olive">
             submit

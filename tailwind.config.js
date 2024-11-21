@@ -31,6 +31,6 @@ export default {
                 'red': '#B55454',
             },
         },
-    plugins: [flowbitePlugin],
+        plugins: [flowbitePlugin],
     }
 }

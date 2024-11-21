@@ -8,7 +8,7 @@
     const AccordionItemAny = AccordionItem as any;
 </script>
 
-<body class="flex flex-col px-10 md:px-40 text-light-olive font-bold pb-[9.09vh]">
+<body class="flex flex-col px-10 md:px-40 text-light-olive font-bold">
     {#each categories as category}
         <h2 class="py-4">{category}</h2>
         <Accordion>
@@ -19,7 +19,7 @@
                             <span class="md:p-2 font-bold">{action.name}</span>
                             <span class="md:p-2 font-bold">{action.score} points</span>
                         </div>
-                        <p>{action.wiki}</p>
+                        <p class="mb-4">{action.wiki}</p>
                         {#if action.tip}
                             <p><span class="text-yellow-300">Tip</span>: {action.tip}</p>
                         {/if}

@@ -1,29 +1,28 @@
 <script lang="ts">
-  import { Accordion, AccordionItem, Input, NumberInput, Toast, Radio, Label } from 'flowbite-svelte';
+  import { Accordion, AccordionItem, Toast, Radio } from 'flowbite-svelte';
   import { CheckCircleSolid } from "flowbite-svelte-icons";
   import { goto, invalidate } from '$app/navigation';
-  import { user } from '$lib/store';
   import type { PageData, ActionData } from './$types';
   import { page } from '$app/stores';
   import { onMount } from "svelte";
+  import EnhancedForm from '$lib/components/EnhancedForm.svelte';
 
 	export let data: PageData;
   export let form: ActionData;
 	$: ({ supabase, userActions, userGoal, profile } = data);
 
-  let isFirstOpen = false;
-  let displayName = "";
-  let nameError = "";
+  let accordionOpen = Array(6)
 	let toastStatus = false;
+  let tostText = "";
   let goal = 0;
-	let counter = 6;
 
   onMount(() => {
-		goal = userGoal;
-		displayName = profile.display_name;
+    goal = userGoal
+    if (form?.error !== undefined) accordionOpen[form.error.target] = true;
+
     const params = new URLSearchParams($page.url.search);
     if (params.get('open') === 'first') {
-      isFirstOpen = true;
+      accordionOpen[0] = true;
     }
 	})
 
@@ -31,65 +30,37 @@
 		await supabase.auth.signOut();
     goto('/');
 	};
-  
-	async function updateGoal(){
-    if (goal <= 0 || goal > 1000) return;
-		
-    await supabase.from("user_goals").upsert({ goal: goal, id: $user?.id });
 
-		invalidate("supabase:db:user_goals");
-		triggerToast();
-	}
-
-	async function updateProfile(){
-    if (displayName == "") return;
-
-    const {error: error } = await supabase.from("profiles").upsert({
-        user_id: $user?.id,
-        display_name: displayName,
-    });
-		console.log(error);
-
-    if (error) {
-      nameError = "Name already taken"; 
-      return;
-    }
-    
-		invalidate("supabase:db:profiles");
-		triggerToast();
-	}
-
-	function triggerToast() {
+	function triggerToast(event: CustomEvent<{ message: string, target: number }>) {
+    accordionOpen[event.detail.target] = true;
 		toastStatus = true;
-		counter = 6;
+    tostText = event.detail.message;
 		timeoutToast();
 	}
 
-  function timeoutToast() {
-    if (--counter > 0) return setTimeout(timeoutToast, 1000);
+  function timeoutToast(counter = 2) {
+    if (--counter > 0) return setTimeout(timeoutToast, counter * 1000, counter);
     toastStatus = false;
+    tostText = "";
   }
-
 
   const AccordionItemAny = AccordionItem as any;
 </script>
 
-<body class="p-4 min-h-screen text-light-olive pb-[9.09vh]">
-  <Toast dismissable={false} bind:toastStatus position="top-left" class="bg-ultra-olive text-white rounded-xl">
+<main class="p-4 text-light-olive">
+  <Toast dismissable={false} bind:toastStatus position="top-right" class="bg-ultra-olive text-white rounded-xl">
 		<CheckCircleSolid slot="icon" color="olive" class="w-5 h-5" />
-		Saved settings
+    <span>{tostText}</span>
 	</Toast>
-	<div class="max-w-s mx-auto p-4">
+	<div class="w-full p-4">
 		<!-- Titel -->
 		<h2 class="text-3xl font-bold mb-4">Profile & Settings</h2>
 
 		<!-- Akkordion -->
     <Accordion>
       <!-- recent actions  -->
-      <AccordionItemAny bind:open={isFirstOpen} class="bg-gray-olive">
-        <div slot="header" class="flex w-full justify-between items-center">
-          <span class="p-2 font-bold">recent actions</span>
-        </div>
+      <AccordionItemAny bind:open={accordionOpen[0]} class="bg-gray-olive p-6">
+        <p slot="header" class="font-bold p-2">recent actions</p>
         <img slot="arrowup" src="/options/ChevronDown.svg" alt="Pfeil runter" />
         <img slot="arrowdown" src="/options/ChevronRight.svg" alt="Pfeil rechts" />
 
@@ -104,10 +75,8 @@
             </li>
         
             <!-- User Actions -->
-            {#each userActions.slice(-20) as userAction}
-              <li
-                class="grid grid-cols-1 gap-y-2 p-2 border-b border-gray-300 md:grid-cols-[1fr_1fr_1fr_1fr] md:gap-x-8 md:p-0 md:border-none"
-              >
+            {#each userActions as userAction}
+              <li class="grid grid-cols-1 gap-y-2 p-2 border-b border-gray-300 md:grid-cols-[1fr_1fr_1fr_1fr] md:gap-x-8 md:p-0 md:border-none">
                 <span class="md:hidden font-bold">Action:</span>
                 <span>{userAction.actions.name}</span>
         
@@ -118,10 +87,8 @@
                 <span>{new Date(userAction.created_at).toLocaleDateString("de-DE",)}</span>
 
                 <form method="POST" action="?/deleteEntry">
-                  <input id="id" name="id" class="hidden" value={userAction.id}>
-                  <button type="submit" class="font-bold hover:text-olive">
-                    Delete
-                  </button>
+                  <input id="id" name="id" class="hidden" value={userAction.id} required>
+                  <button type="submit" class="font-bold hover:text-olive">Delete</button>
                 </form>
               </li>
             {:else}
@@ -132,99 +99,106 @@
       </AccordionItemAny>
 
       <!-- weekly goal -->
-      <AccordionItemAny class="bg-gray-olive">
-        <div slot="header" class="flex w-full justify-between items-center">
-          <span class="p-2 font-bold">weekly goal</span>
-        </div>
+      <AccordionItemAny bind:open={accordionOpen[1]} class="bg-gray-olive p-6">
+        <p slot="header" class="font-bold p-2">weekly goal</p>
         <img slot="arrowup" src="/options/ChevronDown.svg" alt="Pfeil runter" />
         <img slot="arrowdown" src="/options/ChevronRight.svg" alt="Pfeil rechts" />
 
         <!-- Inhalt -->
-        <div class="flex flex-row items-center justify-center p-2">
-          <img src="/options/ChevronLeft.svg" alt="Chevron Left" class="mr-2 mb-12 self-center md:h-12 h-8" />
-          <div class="flex flex-col items-center">
-            <input type="number" min=1 max=1000 class="font-bold text-center max-w-40 md:max-w-60 py-10 px-8 bg-gray-olive rounded md:text-6xl text-4xl" name="goal" bind:value={goal}>
-            <button class="hover:bg-light-olive hover:text-dark-olive font-bold mt-2 py-2 px-4 w-full rounded-full bg-olive text-light-olive" on:click={() => updateGoal()}> commit</button>
-            {#if goal <= 0 || goal > 1000}
-              <span class="text-red-500">Please enter a valid goal (1-1000)</span>
-            {/if}
-          </div>
-          <span class="text-m ml-4 mb-10 font-bold">points</span>
-        </div>
+        <EnhancedForm 
+          action="?/updateGoal" 
+          error={(form?.error && form.error.target === 1) ? form.error.message : ""} 
+          on:complete={(e) => triggerToast(e)}
+        >
+          <ul class="rounded-lg border bg-dark-gray border-gray-600 divide-y divide-gray-600 mb-4">
+            <li>
+                <Radio name="goal" class="p-3" bind:group={goal} value="75">75 - Expert</Radio>
+            </li>
+            <li>
+                <Radio name="goal" class="p-3" bind:group={goal} value="150">150 - Advanced</Radio>
+            </li>
+            <li>
+                <Radio name="goal" class="p-3" bind:group={goal} value="300">300 - Beginner</Radio>
+            </li>
+            <input type="number" required min="1" max="1000" name="goal" bind:value={goal} class="bg-dark-gray w-full font-bold py-2 px-4 rounded-b-lg"/>
+          </ul>
+          <button type="submit" class="hover:bg-light-olive hover:text-dark-olive font-bold mt-2 py-2 px-4 w-full rounded-full bg-olive text-light-olive">
+            submit
+          </button>
+        </EnhancedForm>
       </AccordionItemAny>
 
       <!-- view friends -->
-      <AccordionItemAny class="bg-gray-olive">
-        <div slot="header" class="flex w-full justify-between items-center">
-          <span class="p-2 font-bold">view friends</span>
-        </div>
+      <AccordionItemAny bind:open={accordionOpen[2]} class="bg-gray-olive p-6">
+        <p slot="header" class="font-bold p-2">view friends</p>
         <img slot="arrowup" src="/options/ChevronDown.svg" alt="Pfeil runter" />
         <img slot="arrowdown" src="/options/ChevronRight.svg" alt="Pfeil rechts" />
 
         <!-- Inhalt -->
-        <div class="flex justify-between items-center p-2">
-          <span class="p-2 font-bold">You don't have any friends</span>
-        </div>
+        <div class="p-4 font-bold">You don't have any friends</div>
       </AccordionItemAny>
       
       <!-- change username -->
-      <AccordionItemAny class="bg-gray-olive">
-        <div slot="header" class="flex w-full justify-between items-center">
-          <span class="p-2 font-bold">update display name</span>
-        </div>
+      <AccordionItemAny bind:open={accordionOpen[3]} class="bg-gray-olive p-6">
+        <p slot="header" class="font-bold p-2">update display name</p>
         <img slot="arrowup" src="/options/ChevronDown.svg" alt="Pfeil runter" />
         <img slot="arrowdown" src="/options/ChevronRight.svg" alt="Pfeil rechts" />
+
         <!-- Inhalt -->
-        <div class="flex flex-col justify-between items-center p-2">
-          <Input class="bg-light-olive text-black mb-2" maxlength={16} bind:value={displayName}/>
-          <button class="hover:bg-light-olive hover:text-dark-olive font-bold mt-2 py-2 px-4 w-full rounded-full bg-olive text-light-olive" on:click={() => updateProfile()}>
+        <EnhancedForm 
+          class="flex flex-col items-center" 
+          action="?/updateDisplayname" 
+          error={(form?.error && form.error.target === 3) ? form.error.message : ""} 
+          on:complete={(e) => triggerToast(e)}
+        >
+          <input 
+            class="w-full font-bold py-2 px-4 mb-2 rounded bg-light-olive text-black" value={profile.display_name}
+            name="display_name" 
+            type="text" 
+            required 
+            maxlength="16" 
+          />
+          <button type="submit" class="hover:bg-light-olive hover:text-dark-olive font-bold mt-2 py-2 px-4 w-full rounded-full bg-olive text-light-olive">
 						Save
 					</button>
-          {#if nameError !== ""}	
-          <div class="bg-red-500 text-white p-4 rounded mt-4">
-              <p>{nameError}</p>
-          </div>
-          {/if}
-        </div>
+        </EnhancedForm>
       </AccordionItemAny>
 
       <!-- change profile picture -->
-      <AccordionItemAny class="bg-gray-olive">
-        <div slot="header" class="flex w-full justify-between items-center">
-          <span class="p-2 font-bold">change profile picture</span>
-        </div>
+      <AccordionItemAny bind:open={accordionOpen[4]} class="bg-gray-olive p-6">
+        <p slot="header" class="font-bold p-2">change profile picture</p>
         <img slot="arrowup" src="/options/ChevronDown.svg" alt="Pfeil runter" />
         <img slot="arrowdown" src="/options/ChevronRight.svg" alt="Pfeil rechts" />
 
         <!-- Inhalt -->
-        <div class="flex justify-between items-center p-2">
-          <span class="p-2 font-bold">Not implemented yet</span>
-        </div>
+        <div class="p-4 font-bold">Not implemented yet</div>
       </AccordionItemAny>
       
       <!-- change password -->
-      <AccordionItemAny class="bg-gray-olive">
-        <div slot="header" class="flex w-full justify-between items-center">
-          <span class="p-2 font-bold">change password</span>
-        </div>
+      <AccordionItemAny bind:open={accordionOpen[5]} class="bg-gray-olive p-6">
+        <p slot="header" class="font-bold p-2">change password</p>
         <img slot="arrowup" src="/options/ChevronDown.svg" alt="Pfeil runter" />
         <img slot="arrowdown" src="/options/ChevronRight.svg" alt="Pfeil rechts" />
 
-        <form method="post" action="?/changePassword" class="flex flex-col items-center">
+        <EnhancedForm 
+          action="?/changePassword" 
+          class="flex flex-col items-center" 
+          error={(form?.error && form.error.target === 5) ? form.error.message : ""} 
+          on:complete={(e) => triggerToast(e)}
+        >
           <input type="password" name="new_password" minlength="8" class="w-full font-bold py-2 px-4 mb-2 rounded bg-light-olive text-black" placeholder="new password" required/>
           <button type="submit" class="hover:bg-light-olive hover:text-dark-olive font-bold mt-2 py-2 px-4 w-full rounded-full bg-olive text-light-olive">submit</button>
-          {#if form?.error}	
-            <div class="bg-red-500 text-white p-4 rounded mb-4">
-              <p>{form.error}</p>
-            </div>
-          {/if}
-       </form>
+        </EnhancedForm>
       </AccordionItemAny>
 
       <!-- logout -->
-      <button type="button" on:click={logout} class="w-full flex justify-between items-center p-4 cursor-pointer border border-t-0 bg-gray-olive">
-        <span class="p-3 font-bold">logout</span>
+      <button 
+        class="w-full p-7 font-bold cursor-pointer border border-t-0 bg-gray-olive rounded-b-xl transition hover:bg-light-olive hover:text-dark-olive"
+        type="button"
+        on:click={logout} 
+      >
+        logout
       </button>
     </Accordion>
 	</div>
-</body>
+</main>

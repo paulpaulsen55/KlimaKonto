@@ -6,11 +6,14 @@ export const load: PageServerLoad = async ({ depends, locals: { supabase } }) =>
 	const { data: userActions } = await supabase.from('user_actions').select(
 		`
 			created_at,
-			actions (name, score, category, image)
+			actions (id, name, score, category, image)
 		`
-	);
+	).limit(8).order('created_at', { ascending: false });
 	
-    const { data: actions } = await supabase.from('actions').select('id, score, name, category, image');
+	const { data: allActions } = await supabase.from('actions').select('id, score, name, category, image');
+	const actions: Action[] = allActions ?? [];
 
-	return { userActions: userActions ?? [], actions: actions ?? [] };
+	const categories = [...new Set(actions.map((action) => action.category))]
+
+	return { userActions: userActions ?? [], actions, categories };
 };

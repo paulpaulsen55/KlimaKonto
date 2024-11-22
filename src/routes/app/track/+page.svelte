@@ -1,39 +1,25 @@
 <script lang="ts">
+    import { onMount } from 'svelte';
     import { invalidate } from '$app/navigation';
-    import type { SupabaseClient } from '@supabase/supabase-js';
 	import type { PageData } from './$types';
-    import { supabase, user } from '$lib/store';
 
-	export let data: PageData;
-    type Action = {
-        id: number;
-        name: string;
-        score: number;
-        category: string;
-        image: string;
-    };
-    export let actions: Action[] = [];
-    $: ({ userActions, actions } = data);
-    $: categories = [...new Set(actions.map((action) => action.category))];
+    export let data: PageData;
+    $: ({ userActions, actions, categories, supabase, user } = data);
+
+    let selectedCategory = "";
+    onMount(() => {
+        selectedCategory = categories[0];        
+    })
 
     $: filteredActions = actions.filter(
-    (action) => action.category === selectedCategory
+        (action) => action.category === selectedCategory
     );
     $: sortedActions = [...filteredActions].sort((a, b) => a.score - b.score);
-
-	let sc: SupabaseClient;
-    let selectedCategory = "";
-
-    supabase.subscribe(value => {
-        if (!value) return;
-        sc = value;
-    });
-
 
     async function handleSubmit(actionId: number) {
         if (!actionId ) return;
 
-        await sc.from('user_actions').insert({ action_id: actionId, user_id: $user?.id });
+        await supabase.from('user_actions').insert({ action_id: actionId, user_id: user?.id });
         
         invalidate('supabase:db:user_actions');
     }
@@ -48,8 +34,7 @@
 
 <body class= "m-6">
     <h2 class="text-light-olive text-4xl ml-1">Activity</h2>
-    <select name="category" class="border rounded h-10 mb-2" bind:value={selectedCategory}>
-        <option value={""} style="font-size: 0.75rem;">Select an action</option>
+    <select name="category" class="border p-2 rounded h-10 mb-2 w-full" bind:value={selectedCategory}>
         {#each categories as category}
             <option class="p-2 text-base sm:text-lg md:text-xl lg:text-2xl" value={category} style="font-size: 0.75rem;">{category}</option>
         {/each}
@@ -79,12 +64,13 @@
         {#each userActions as userAction}
             <li >
                 <button
-                        type="button"
-                        class={`flex justify-between items-center p-4 rounded ${getColor(userAction.actions.score)}`}
-                        on:click={() => handleSubmit(userAction.actions.id)}
-                    >
-                        <img src= "/{userAction.actions.image}" alt="pictogram" class="w-10 h-10">
-                    </button>
+                    title="Add {userAction.actions.name} again ({userAction.actions.score} points)"
+                    type="button"
+                    class={`flex justify-between items-center p-4 rounded ${getColor(userAction.actions.score)}`}
+                    on:click={() => handleSubmit(userAction.actions.id)}
+                >
+                    <img src= "/{userAction.actions.image}" alt="pictogram" class="w-10 h-10">
+                </button>
             </li>
         {/each}
     </ul>

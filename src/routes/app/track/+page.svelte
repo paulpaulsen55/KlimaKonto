@@ -25,16 +25,16 @@
     }
 
     function getColor(score: number): string {
-        if (score < 2) return "bg-light-green text-black"; // Niedriger Score -> Grün
-        if (score < 5) return "bg-yellow text-black"; // Mittlerer Score -> Gelb
-        if (score < 7) return "bg-orange text-black"; // Höherer Score -> Orange
-        return "bg-red text-black"; // Höchster Score -> Rot
+        if (score < 2) return "bg-light-green text-black"; 
+        if (score < 5) return "bg-yellow text-black"; 
+        if (score < 7) return "bg-orange text-black"; 
+        return "bg-red text-black"; 
     }
 </script>
 
 <body class= "m-6">
     <h2 class="text-light-olive text-4xl ml-1">Activity</h2>
-    <select name="category" class="border p-2 rounded h-10 mb-2 w-full" bind:value={selectedCategory}>
+    <select name="category" class="border p-2 rounded h-10 mb-2 w-full text-black" bind:value={selectedCategory}>
         {#each categories as category}
             <option class="p-2 text-base sm:text-lg md:text-xl lg:text-2xl" value={category} style="font-size: 0.75rem;">{category}</option>
         {/each}

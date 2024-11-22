@@ -6,7 +6,7 @@ export const load: PageServerLoad = async ({ depends, locals: { supabase } }) =>
 	const { data: userActions } = await supabase.from('user_actions').select(
 		`
 			created_at,
-			actions (name, score, category)
+			actions (name, score, category, image)
 		`
 	);
 	

@@ -52,8 +52,6 @@ export const actions: Actions = {
 
       if (error) return fail(400, { error: { message: "Goal could not be changed", target: 1 } });
 
-      console.log('Goal changed successfully', goal);
-      
       return { success: { message: "Goal changed successfully", target: 1 } };
    }
 };

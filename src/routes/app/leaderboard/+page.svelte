@@ -5,7 +5,7 @@
     $: ({ userActions } = data);
 </script>
 
-<div class="text-[#E7F0DC] overflow-y-auto">
+<div class="text-light-olive">
     <div class="bg-light-olive bg-opacity-25 flex flex-col items-center m-5 p-5 rounded-xl">
         <svg
             xmlns="http://www.w3.org/2000/svg"

@@ -28,6 +28,6 @@ export default {
                 'gray-olive': '#43584D',
             },
         },
-    plugins: [flowbitePlugin],
+        plugins: [flowbitePlugin],
     }
 }

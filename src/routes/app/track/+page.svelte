@@ -49,7 +49,7 @@
                         class={`flex justify-between items-center p-4 rounded ${getColor(action.score)} w-full`}
                         on:click={() => handleSubmit(action.id)}
                     >
-                        <img src= "/{action.image}" alt="pictogram" class="w-10 h-10">
+                        <img src= "/{action.image}" alt="icon" class="w-10 h-10">
                         <span class="flex-1 text-center text-lg font-medium">{action.name}</span>
                         <span class="text-sm text-gray-500 font-semibold">+{action.score}</span>
                     </button>
@@ -69,7 +69,7 @@
                     class={`flex justify-between items-center p-4 rounded ${getColor(userAction.actions.score)}`}
                     on:click={() => handleSubmit(userAction.actions.id)}
                 >
-                    <img src= "/{userAction.actions.image}" alt="pictogram" class="w-10 h-10">
+                    <img src= "/{userAction.actions.image}" alt="icon" class="w-10 h-10">
                 </button>
             </li>
         {/each}

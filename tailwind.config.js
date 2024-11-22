@@ -24,6 +24,7 @@ export default {
                 'olive': '#466045',
                 'light-olive': '#D0E7D2',
                 'dark-gray': '#1E1E1E',
+                'gray-olive': '#43584D',
                 'gray': '#2B2E2C',
                 'light-green': '#59AD71',
                 'yellow': '#E3E58E',

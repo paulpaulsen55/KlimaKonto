@@ -29,7 +29,7 @@ export default {
                 'light-green': '#59AD71',
                 'yellow': '#E3E58E',
                 'orange': '#D8A16E',
-                'red': '#B55454',
+                'ruby': '#B55454',
             },
         },
         plugins: [flowbitePlugin],

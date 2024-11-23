@@ -22,9 +22,9 @@
                         </label>
                         <button class="w-full font-bold py-2 px-4 rounded bg-olive text-light-olive">Login</button>
                         {#if form?.error}	
-                        <div class="bg-red-500 text-white p-4 rounded mb-4">
-                            <p>{form.error}</p>
-                        </div>
+                            <div class="bg-red-500 text-white p-4 rounded mb-4">
+                                <p>{form.error}</p>
+                            </div>
                         {/if}
                         <p class="font-bold text-light-olive mb-6">Need an Account? <a class="underline text-bg-olive" href="/register">Register</a></p>
                         <a class="font-bold underline text-light-olive" href="/">Home</a>

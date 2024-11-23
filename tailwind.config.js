@@ -27,7 +27,7 @@ export default {
                 'gray-olive': '#43584D',
                 'gray': '#2B2E2C',
                 'light-green': '#59AD71',
-                'yellow': '#E3E58E',
+                'lemon': '#E3E58E',
                 'orange': '#D8A16E',
                 'ruby': '#B55454',
             },

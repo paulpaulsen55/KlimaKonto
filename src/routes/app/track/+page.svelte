@@ -26,7 +26,7 @@
 
     function getColor(score: number): string {
         if (score < 2) return "bg-light-green text-black"; 
-        if (score < 5) return "bg-yellow text-black"; 
+        if (score < 5) return "bg-lemon text-black"; 
         if (score < 7) return "bg-orange text-black"; 
         return "bg-ruby text-black"; 
     }
